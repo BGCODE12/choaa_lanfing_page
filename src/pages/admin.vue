@@ -124,6 +124,61 @@
         </button>
       </div>
 
+      <!-- Tab Content: Site Logo & Branding Settings -->
+      <div v-if="activeTab === 'branding'" class="bg-[#061916] border border-[#C5A059]/30 rounded-2xl p-6 space-y-6 shadow-xl max-w-3xl">
+        <div class="border-b border-white/10 pb-4">
+          <h3 class="text-base font-bold font-serif text-white">Site Logo & Name Settings (اسم وشعار الموقع)</h3>
+          <p class="text-xs text-gray-400">Upload your official brand logo image and change header & footer titles.</p>
+        </div>
+
+        <div class="space-y-4 text-xs">
+          <!-- Logo File Upload -->
+          <div class="bg-[#041210] p-4 rounded-xl border border-white/10 space-y-3">
+            <label class="block text-xs font-bold text-[#E5C483] uppercase">Website Logo Image (Upload File or URL)</label>
+            <div class="flex flex-col sm:flex-row items-center gap-3">
+              <label class="px-4 py-2.5 bg-[#C5A059] text-[#061916] font-extrabold rounded cursor-pointer hover:bg-[#E5C483] flex items-center gap-1.5 shadow-md">
+                <v-icon size="16">mdi-upload</v-icon>
+                <span>Upload Logo File</span>
+                <input type="file" accept="image/*" class="hidden" @change="onLogoFileUpload" />
+              </label>
+              <input v-model="cms.siteSettings.logoImage" placeholder="Or Image URL / Data Base64..." class="flex-1 w-full bg-[#061916] border border-white/20 rounded p-2.5 text-white font-mono" />
+            </div>
+
+            <div class="flex items-center gap-3 mt-2">
+              <div v-if="cms.siteSettings.logoImage" class="w-16 h-16 rounded-full overflow-hidden border-2 border-[#C5A059] bg-[#061916]">
+                <img :src="cms.siteSettings.logoImage" alt="Logo Preview" class="w-full h-full object-cover" />
+              </div>
+              <span v-if="cms.siteSettings.logoImage" class="text-emerald-400 font-mono text-[10px]">Custom Logo Active</span>
+              <button v-if="cms.siteSettings.logoImage" @click="cms.siteSettings.logoImage = ''" class="text-red-400 hover:text-red-300 text-[11px] underline">Remove Logo</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-gray-300 font-bold mb-1">Site Name (EN)</label>
+              <input v-model="cms.siteSettings.siteNameEn" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white" />
+            </div>
+            <div>
+              <label class="block text-gray-300 font-bold mb-1">Site Name (AR)</label>
+              <input v-model="cms.siteSettings.siteNameAr" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white text-right" />
+            </div>
+
+            <div>
+              <label class="block text-gray-300 font-bold mb-1">Subtitle / Tagline (EN)</label>
+              <input v-model="cms.siteSettings.subTitleEn" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white" />
+            </div>
+            <div>
+              <label class="block text-gray-300 font-bold mb-1">Subtitle / Tagline (AR)</label>
+              <input v-model="cms.siteSettings.subTitleAr" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white text-right" />
+            </div>
+          </div>
+
+          <button @click="showToast('Site logo & name settings saved!')" class="px-6 py-2.5 bg-[#C5A059] text-[#061916] font-bold text-xs rounded-lg hover:bg-[#E5C483]">
+            Save Branding Settings
+          </button>
+        </div>
+      </div>
+
       <!-- Tab Content 1: Header Navigation Links -->
       <div v-if="activeTab === 'nav'" class="bg-[#061916] border border-[#C5A059]/30 rounded-2xl p-6 space-y-6 shadow-xl">
         <div class="flex justify-between items-center border-b border-white/10 pb-4">
@@ -658,9 +713,10 @@ const showPin = ref(false)
 const loginError = ref(false)
 const toastMessage = ref('')
 
-const activeTab = ref('nav')
+const activeTab = ref('branding')
 
 const tabs = [
+  { id: 'branding', label: 'Site Logo & Name', icon: 'mdi-earth-box-plus' },
   { id: 'nav', label: 'Header Nav Links', icon: 'mdi-link-variant' },
   { id: 'hero', label: 'Hero Carousel & Buttons', icon: 'mdi-view-carousel-outline' },
   { id: 'stream', label: 'Live Broadcast Stream', icon: 'mdi-video-wireless-outline' },
@@ -692,6 +748,21 @@ function showToast(msg: string) {
   setTimeout(() => {
     toastMessage.value = ''
   }, 4000)
+}
+
+function onLogoFileUpload(event: Event) {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files[0]) {
+    const file = target.files[0]
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      if (e.target?.result) {
+        cms.siteSettings.logoImage = e.target.result as string
+        showToast('Site logo image uploaded successfully!')
+      }
+    }
+    reader.readAsDataURL(file)
+  }
 }
 
 function onSlideFileUpload(event: Event, slideId: number) {

@@ -69,6 +69,14 @@ export interface FatwaSettings {
   fatwaUrl: string
 }
 
+export interface SiteSettings {
+  siteNameEn: string
+  siteNameAr: string
+  subTitleEn: string
+  subTitleAr: string
+  logoImage: string
+}
+
 export interface NewsItem {
   id: number
   month: string
@@ -104,6 +112,15 @@ export const useCmsStore = defineStore('cms', () => {
   // Auth state
   const isAuthenticated = ref(false)
   const adminPin = ref('123456') // Default Secret Passcode
+
+  // Site Branding & Logo Settings
+  const siteSettings = ref<SiteSettings>({
+    siteNameEn: 'AL-KHOEI',
+    siteNameAr: 'مؤسسة الخوئي العالمية',
+    subTitleEn: 'FOUNDATION • EST. 1989',
+    subTitleAr: 'تأسست عام 1989 • منظمة إسلامية',
+    logoImage: '',
+  })
 
   // Social Links
   const socialLinks = ref<SocialLinks>({
@@ -395,6 +412,7 @@ export const useCmsStore = defineStore('cms', () => {
       try {
         const data = JSON.parse(saved)
         if (data.adminPin) adminPin.value = data.adminPin
+        if (data.siteSettings) siteSettings.value = data.siteSettings
         if (data.socialLinks) socialLinks.value = data.socialLinks
         if (data.streamSettings) streamSettings.value = data.streamSettings
         if (data.donationSettings) donationSettings.value = data.donationSettings
@@ -416,6 +434,7 @@ export const useCmsStore = defineStore('cms', () => {
   function saveToStorage() {
     const data = {
       adminPin: adminPin.value,
+      siteSettings: siteSettings.value,
       socialLinks: socialLinks.value,
       streamSettings: streamSettings.value,
       donationSettings: donationSettings.value,
@@ -437,7 +456,7 @@ export const useCmsStore = defineStore('cms', () => {
 
   // Watch for changes and save automatically
   watch(
-    [adminPin, socialLinks, streamSettings, donationSettings, fatwaSettings, navLinks, heroSlides, prayerTimes, quickActions, newsList, presenceStats, institutions, footerInfo],
+    [adminPin, siteSettings, socialLinks, streamSettings, donationSettings, fatwaSettings, navLinks, heroSlides, prayerTimes, quickActions, newsList, presenceStats, institutions, footerInfo],
     () => {
       saveToStorage()
     },
@@ -506,6 +525,7 @@ export const useCmsStore = defineStore('cms', () => {
   return {
     isAuthenticated,
     adminPin,
+    siteSettings,
     socialLinks,
     streamSettings,
     donationSettings,

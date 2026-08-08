@@ -4,16 +4,26 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-20">
         
-        <!-- Brand Logo & Name -->
+        <!-- Brand Logo & Name (Bound to CMS Store) -->
         <div class="flex items-center gap-3 cursor-pointer" @click="$emit('navigate', 'home')">
-          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-[#C5A059] to-[#8C6B28] flex items-center justify-center p-0.5 shadow-lg shadow-[#C5A059]/20">
+          <!-- Custom Logo Image OR Default Dome Icon -->
+          <div v-if="cms.siteSettings.logoImage" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-[#C5A059] shadow-lg shadow-[#C5A059]/20 bg-[#061916]">
+            <img :src="cms.siteSettings.logoImage" alt="Site Logo" class="w-full h-full object-cover" />
+          </div>
+
+          <div v-else class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-[#C5A059] to-[#8C6B28] flex items-center justify-center p-0.5 shadow-lg shadow-[#C5A059]/20">
             <div class="w-full h-full rounded-full bg-[#061916] flex items-center justify-center">
               <v-icon size="24" class="sm:text-[28px]" color="#C5A059">mdi-mosque</v-icon>
             </div>
           </div>
+
           <div>
-            <h1 class="text-base sm:text-xl font-bold tracking-wider text-white font-serif uppercase">AL-KHOEI</h1>
-            <p class="text-[9px] sm:text-[10px] text-[#C5A059] tracking-widest font-semibold uppercase -mt-1">FOUNDATION • EST. 1989</p>
+            <h1 class="text-base sm:text-xl font-bold tracking-wider text-white font-serif uppercase">
+              {{ isRtl ? cms.siteSettings.siteNameAr : cms.siteSettings.siteNameEn }}
+            </h1>
+            <p class="text-[9px] sm:text-[10px] text-[#C5A059] tracking-widest font-semibold uppercase -mt-0.5">
+              {{ isRtl ? cms.siteSettings.subTitleAr : cms.siteSettings.subTitleEn }}
+            </p>
           </div>
         </div>
 
@@ -99,12 +109,19 @@
         <!-- Header inside Overlay -->
         <div class="p-5 border-b border-[#C5A059]/20 flex justify-between items-center bg-[#041210]">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-[#C5A059]/15 border border-[#C5A059]/40 flex items-center justify-center text-[#C5A059]">
+            <div v-if="cms.siteSettings.logoImage" class="w-10 h-10 rounded-full overflow-hidden border border-[#C5A059]">
+              <img :src="cms.siteSettings.logoImage" alt="Logo" class="w-full h-full object-cover" />
+            </div>
+            <div v-else class="w-10 h-10 rounded-full bg-[#C5A059]/15 border border-[#C5A059]/40 flex items-center justify-center text-[#C5A059]">
               <v-icon size="22">mdi-mosque</v-icon>
             </div>
             <div>
-              <h3 class="font-bold text-sm text-white uppercase tracking-wider">AL-KHOEI FOUNDATION</h3>
-              <p class="text-[10px] text-[#C5A059] font-semibold">EST. 1989</p>
+              <h3 class="font-bold text-sm text-white uppercase tracking-wider">
+                {{ isRtl ? cms.siteSettings.siteNameAr : cms.siteSettings.siteNameEn }}
+              </h3>
+              <p class="text-[10px] text-[#C5A059] font-semibold">
+                {{ isRtl ? cms.siteSettings.subTitleAr : cms.siteSettings.subTitleEn }}
+              </p>
             </div>
           </div>
           <button
