@@ -14,7 +14,7 @@
             </div>
             <div>
               <h3 class="text-lg font-bold font-serif text-white tracking-wider uppercase">AL-KHOEI FOUNDATION</h3>
-              <p class="text-[10px] text-[#C5A059] tracking-widest font-semibold uppercase -mt-1">GLOBAL ISLAMIC ORGANIZATION</p>
+              <p class="text-[10px] text-[#C5A059] tracking-widest font-semibold uppercase -mt-1">EST. 1989</p>
             </div>
           </div>
 
@@ -32,7 +32,7 @@
 
         <!-- Col 2: Quick Links (Span 3) -->
         <div class="lg:col-span-3 space-y-3">
-          <h4 class="text-sm font-bold font-serif text-white uppercase tracking-wider border-b border-[#C5A059]/20 pb-2 inline-block">
+          <h4 class="text-xs font-bold font-serif text-[#C5A059] uppercase tracking-wider border-b border-[#C5A059]/20 pb-2 inline-block">
             {{ t('footer.quickLinks') }}
           </h4>
           <ul class="space-y-2 text-xs">
@@ -47,7 +47,7 @@
 
         <!-- Col 3: Contact Info (Span 3) -->
         <div class="lg:col-span-3 space-y-3">
-          <h4 class="text-sm font-bold font-serif text-white uppercase tracking-wider border-b border-[#C5A059]/20 pb-2 inline-block">
+          <h4 class="text-xs font-bold font-serif text-[#C5A059] uppercase tracking-wider border-b border-[#C5A059]/20 pb-2 inline-block">
             {{ t('footer.contactUs') }}
           </h4>
           <ul class="space-y-2.5 text-xs text-gray-400">
@@ -68,7 +68,7 @@
 
         <!-- Col 4: Newsletter Subscription (Span 2) -->
         <div class="lg:col-span-2 space-y-3">
-          <h4 class="text-sm font-bold font-serif text-white uppercase tracking-wider border-b border-[#C5A059]/20 pb-2 inline-block">
+          <h4 class="text-xs font-bold font-serif text-[#C5A059] uppercase tracking-wider border-b border-[#C5A059]/20 pb-2 inline-block">
             Newsletter
           </h4>
           <p class="text-[11px] text-gray-400">Subscribe for updates on programs and fatwas.</p>

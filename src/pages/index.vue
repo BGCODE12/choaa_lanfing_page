@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#061916] text-white flex flex-col selection:bg-[#C5A059] selection:text-[#061916]">
+  <div class="min-h-screen bg-white text-gray-900 flex flex-col selection:bg-[#C5A059] selection:text-[#061916]">
     
     <!-- Top Navigation Header -->
     <AppHeader
@@ -12,35 +12,40 @@
     <!-- Main Page Body -->
     <main class="flex-1">
       
-      <!-- Hero Section -->
+      <!-- Hero Section (Dark Emerald Carousel Banner) -->
       <section id="home">
         <HeroSection
-          @open-programs="scrollToSection('programs')"
+          @open-action="handleHeroAction"
+          @open-programs="scrollToSection('institutions')"
           @open-donate="showDonateModal = true"
-          @open-prayer-times="showPrayerModal = true"
         />
       </section>
 
-      <!-- Quick Action Grid -->
+      <!-- Prayer Times Section (Sayyid Al-Khoei NY Calculations) -->
+      <section id="prayer-times">
+        <PrayerTimesSection />
+      </section>
+
+      <!-- Quick Action Grid (White Background) -->
       <section id="quick-actions">
         <QuickActionGrid @select-action="handleQuickAction" />
       </section>
 
-      <!-- Latest News & Announcements -->
+      <!-- Latest News & Announcements (White Background) -->
       <section id="news">
         <LatestNewsSection @view-all-news="scrollToSection('news')" />
       </section>
 
-      <!-- Featured Cards: Donation, Live Lecture, Ask Question -->
+      <!-- Featured Cards: Donation, Live Lecture, Ask Question (Light Grey Background) -->
       <section id="featured">
         <FeaturedGridSection
           @open-donate="showDonateModal = true"
           @open-live="showLiveModal = true"
-          @open-ask="showAskModal = true"
+          @open-ask="openAskQuestionUrl"
         />
       </section>
 
-      <!-- Global Presence & Institutions -->
+      <!-- Global Presence & Institutions (White Background) -->
       <section id="institutions">
         <GlobalPresenceSection
           @view-institutions="scrollToSection('institutions')"
@@ -48,12 +53,12 @@
         />
       </section>
 
-      <!-- 4 Pillars Footer Banner -->
+      <!-- 4 Pillars Banner (Dark Emerald Accent Section) -->
       <PillarsFooterBanner />
 
     </main>
 
-    <!-- Footer -->
+    <!-- Footer (Dark Footer) -->
     <AppFooter id="contact" />
 
     <!-- Interactive Modals -->
@@ -86,8 +91,11 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useCmsStore } from '@/stores/cms'
+
 import AppHeader from '@/components/AppHeader.vue'
 import HeroSection from '@/components/HeroSection.vue'
+import PrayerTimesSection from '@/components/PrayerTimesSection.vue'
 import QuickActionGrid from '@/components/QuickActionGrid.vue'
 import LatestNewsSection from '@/components/LatestNewsSection.vue'
 import FeaturedGridSection from '@/components/FeaturedGridSection.vue'
@@ -100,6 +108,8 @@ import AskQuestionModal from '@/components/AskQuestionModal.vue'
 import PrayerTimesModal from '@/components/PrayerTimesModal.vue'
 import LiveStreamModal from '@/components/LiveStreamModal.vue'
 
+const cms = useCmsStore()
+
 const showDonateModal = ref(false)
 const showAskModal = ref(false)
 const showPrayerModal = ref(false)
@@ -108,6 +118,15 @@ const showSearchModal = ref(false)
 
 const searchQuery = ref('')
 
+function openAskQuestionUrl() {
+  const url = cms.fatwaSettings?.fatwaUrl || 'https://al-khoei.org/fatwas'
+  if (url.startsWith('#')) {
+    scrollToSection(url.replace('#', ''))
+  } else {
+    window.open(url, '_blank')
+  }
+}
+
 function scrollToSection(key: string) {
   const el = document.getElementById(key)
   if (el) {
@@ -115,17 +134,33 @@ function scrollToSection(key: string) {
   }
 }
 
+function handleHeroAction(action: string) {
+  if (action === 'donate') {
+    showDonateModal.value = true
+  } else if (action === 'institutions' || action === 'humanitarian') {
+    scrollToSection('institutions')
+  } else if (action === 'library') {
+    window.open('https://al-khoei.org/library', '_blank')
+  } else {
+    scrollToSection('institutions')
+  }
+}
+
 function handleQuickAction(actionKey: string) {
   if (actionKey === 'donate') {
     showDonateModal.value = true
   } else if (actionKey === 'askQuestion') {
-    showAskModal.value = true
+    openAskQuestionUrl()
   } else if (actionKey === 'liveBroadcast') {
     showLiveModal.value = true
   } else if (actionKey === 'ourInstitutions') {
     scrollToSection('institutions')
+  } else if (actionKey === 'islamicLibrary') {
+    window.open('https://al-khoei.org/library', '_blank')
+  } else if (actionKey === 'shop') {
+    window.open('https://al-khoei.org/shop', '_blank')
   } else {
-    alert(`Navigating to ${actionKey} section...`)
+    scrollToSection('institutions')
   }
 }
 
