@@ -632,31 +632,89 @@
         </button>
       </div>
 
-      <!-- Tab Content 4: News & Announcements CMS -->
+      <!-- Tab Content 4: News & Occasions CMS -->
       <div v-if="activeTab === 'news'" class="bg-[#061916] border border-[#C5A059]/30 rounded-2xl p-6 space-y-6 shadow-xl">
-        <div class="flex justify-between items-center border-b border-white/10 pb-4">
+        <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-white/10 pb-4">
           <div>
-            <h3 class="text-base font-bold font-serif text-white">News & Announcements CMS</h3>
-            <p class="text-xs text-gray-400">Add, edit, or remove news cards displayed on the landing page.</p>
+            <h3 class="text-base font-bold font-serif text-white">Latest Occasions & News CMS (الأخبار والمناسبات والمجالس)</h3>
+            <p class="text-xs text-gray-400">Manage, edit, upload images, and add religious occasions & news cards displayed next to prayer times.</p>
           </div>
-          <button @click="showAddNewsModal = true" class="px-4 py-2 bg-[#C5A059] text-[#061916] text-xs font-bold rounded-lg flex items-center gap-1.5 hover:bg-[#E5C483] cursor-pointer">
+          <button @click="showAddNewsModal = true" class="px-4 py-2 bg-[#C5A059] text-[#061916] text-xs font-bold rounded-lg flex items-center gap-1.5 hover:bg-[#E5C483] cursor-pointer self-start">
             <v-icon size="16">mdi-plus</v-icon>
-            <span>Add News Card</span>
+            <span>Add Occasion / News Card</span>
           </button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div v-for="news in cms.newsList" :key="news.id" class="bg-[#041210] border border-white/10 rounded-xl p-4 space-y-3">
-            <div class="flex justify-between items-start">
-              <span class="text-[10px] font-bold text-[#C5A059] uppercase tracking-wider">{{ news.month }} {{ news.day }} • {{ news.category }}</span>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div
+            v-for="(news, index) in cms.newsList"
+            :key="news.id"
+            class="bg-[#041210] border border-white/10 rounded-2xl p-5 space-y-4 shadow-lg flex flex-col justify-between"
+          >
+            <div class="flex justify-between items-center border-b border-white/10 pb-3">
+              <span class="px-2.5 py-1 rounded bg-[#C5A059]/20 text-[#E5C483] text-xs font-mono font-bold">Occasion Card #0{{ index + 1 }}</span>
               <button @click="cms.removeNewsItem(news.id)" class="text-xs text-red-400 hover:text-red-300 font-semibold flex items-center gap-1 cursor-pointer">
                 <v-icon size="14">mdi-delete-outline</v-icon> Delete
               </button>
             </div>
-            <h4 class="text-sm font-bold text-white">{{ news.titleEn }}</h4>
-            <p class="text-xs text-gray-400 line-clamp-2">{{ news.summaryEn }}</p>
+
+            <!-- Image Picker -->
+            <div class="bg-[#061916] p-3 rounded-xl border border-[#C5A059]/30 space-y-2">
+              <label class="block text-[11px] font-bold text-[#E5C483] uppercase">Card Image (Upload File or URL)</label>
+              <div class="flex flex-col sm:flex-row items-center gap-2">
+                <label class="px-3 py-2 bg-[#C5A059] text-[#061916] font-bold text-xs rounded cursor-pointer hover:bg-[#E5C483] flex items-center gap-1">
+                  <v-icon size="14">mdi-upload</v-icon>
+                  <span>Upload File</span>
+                  <input type="file" accept="image/*" class="hidden" @change="e => onNewsFileUpload(e, news.id)" />
+                </label>
+                <input v-model="news.image" placeholder="Or paste image URL / Base64..." class="flex-1 w-full bg-[#041210] border border-white/20 rounded p-2 text-xs text-white font-mono" />
+              </div>
+              <div v-if="news.image" class="h-28 w-full rounded-lg overflow-hidden border border-white/20 mt-2">
+                <img :src="news.image" alt="Preview" class="w-full h-full object-cover" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 text-xs">
+              <div>
+                <label class="block text-gray-400 mb-1">Month</label>
+                <input v-model="news.month" placeholder="MAY / صفر" class="w-full bg-[#061916] border border-white/20 rounded p-2 text-white font-mono" />
+              </div>
+              <div>
+                <label class="block text-gray-400 mb-1">Day</label>
+                <input v-model="news.day" placeholder="28" class="w-full bg-[#061916] border border-white/20 rounded p-2 text-white font-mono" />
+              </div>
+              <div>
+                <label class="block text-gray-400 mb-1">Category</label>
+                <input v-model="news.category" placeholder="OCCASION" class="w-full bg-[#061916] border border-white/20 rounded p-2 text-white font-mono uppercase" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div>
+                <label class="block text-gray-400 mb-1 font-semibold">Title (EN)</label>
+                <input v-model="news.titleEn" class="w-full bg-[#061916] border border-white/20 rounded p-2.5 text-white" />
+              </div>
+              <div>
+                <label class="block text-gray-400 mb-1 font-semibold">Title (AR)</label>
+                <input v-model="news.titleAr" class="w-full bg-[#061916] border border-white/20 rounded p-2.5 text-white text-right" />
+              </div>
+
+              <div class="sm:col-span-2">
+                <label class="block text-gray-400 mb-1">Caption / Summary (EN)</label>
+                <textarea v-model="news.summaryEn" rows="2" class="w-full bg-[#061916] border border-white/20 rounded p-2 text-white"></textarea>
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-gray-400 mb-1">Caption / Summary (AR)</label>
+                <textarea v-model="news.summaryAr" rows="2" class="w-full bg-[#061916] border border-white/20 rounded p-2 text-white text-right"></textarea>
+              </div>
+            </div>
+
           </div>
         </div>
+
+        <button @click="showToast('Occasions & news cards saved successfully!')" class="px-6 py-2.5 bg-[#C5A059] text-[#061916] font-bold text-xs rounded-lg hover:bg-[#E5C483] cursor-pointer">
+          Save Occasions Changes
+        </button>
       </div>
 
       <!-- Tab Content 5: Security & Passcode Change -->
@@ -811,24 +869,44 @@
       </div>
     </v-dialog>
 
-    <!-- Modal: Add News Item -->
+    <!-- Modal: Add News & Occasion Item -->
     <v-dialog v-model="showAddNewsModal" max-width="600">
-      <div class="bg-[#061916] border border-[#C5A059]/40 rounded-2xl p-6 text-white space-y-4">
-        <h4 class="text-base font-bold font-serif text-[#E5C483]">Add News Card</h4>
+      <div class="bg-[#061916] border border-[#C5A059]/40 rounded-2xl p-6 text-white space-y-4 shadow-2xl">
+        <div class="flex justify-between items-center border-b border-white/10 pb-3">
+          <h4 class="text-base font-bold font-serif text-[#E5C483]">Add Occasion / News Card (إضافة مناسبة أو خبر)</h4>
+          <button @click="showAddNewsModal = false" class="text-gray-400 hover:text-white cursor-pointer"><v-icon size="18">mdi-close</v-icon></button>
+        </div>
+
         <div class="space-y-3 text-xs">
+          <!-- Image Upload Box -->
+          <div class="bg-[#041210] p-3.5 rounded-xl border border-[#C5A059]/30 space-y-2">
+            <label class="block text-xs font-bold text-[#E5C483] uppercase">Card Image (Upload File or URL)</label>
+            <div class="flex items-center gap-2">
+              <label class="px-3 py-2 bg-[#C5A059] text-[#061916] font-bold text-xs rounded cursor-pointer hover:bg-[#E5C483] flex items-center gap-1 shadow-md">
+                <v-icon size="14">mdi-upload</v-icon>
+                <span>Upload File</span>
+                <input type="file" accept="image/*" class="hidden" @change="onNewNewsFileUpload" />
+              </label>
+              <input v-model="newNews.image" placeholder="Or paste image URL / Base64..." class="flex-1 bg-[#061916] border border-white/20 rounded p-2 text-xs text-white font-mono" />
+            </div>
+            <div v-if="newNews.image" class="h-28 w-full rounded-lg overflow-hidden border border-white/20 mt-1">
+              <img :src="newNews.image" alt="Preview" class="w-full h-full object-cover" />
+            </div>
+          </div>
+
           <div class="grid grid-cols-3 gap-2">
-            <input v-model="newNews.month" placeholder="Month (MAY)" class="bg-[#041210] border border-white/20 rounded p-2.5 text-white" />
-            <input v-model="newNews.day" placeholder="Day (28)" class="bg-[#041210] border border-white/20 rounded p-2.5 text-white" />
-            <input v-model="newNews.category" placeholder="Category" class="bg-[#041210] border border-white/20 rounded p-2.5 text-white" />
+            <input v-model="newNews.month" placeholder="Month (MAY / صفر)" class="bg-[#041210] border border-white/20 rounded p-2.5 text-white font-mono" />
+            <input v-model="newNews.day" placeholder="Day (28)" class="bg-[#041210] border border-white/20 rounded p-2.5 text-white font-mono" />
+            <input v-model="newNews.category" placeholder="Category (OCCASION)" class="bg-[#041210] border border-white/20 rounded p-2.5 text-white font-mono uppercase" />
           </div>
           <input v-model="newNews.titleEn" placeholder="Title (EN)" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white" />
           <input v-model="newNews.titleAr" placeholder="Title (AR)" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white text-right" />
-          <textarea v-model="newNews.summaryEn" placeholder="Summary (EN)" rows="2" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white"></textarea>
-          <textarea v-model="newNews.summaryAr" placeholder="Summary (AR)" rows="2" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white text-right"></textarea>
+          <textarea v-model="newNews.summaryEn" placeholder="Summary / Caption (EN)" rows="2" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white"></textarea>
+          <textarea v-model="newNews.summaryAr" placeholder="Summary / Caption (AR)" rows="2" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white text-right"></textarea>
         </div>
-        <div class="flex justify-end gap-2 pt-2">
+        <div class="flex justify-end gap-2 pt-2 border-t border-white/10">
           <button @click="showAddNewsModal = false" class="px-4 py-2 bg-gray-700 text-white rounded text-xs cursor-pointer">Cancel</button>
-          <button @click="onSaveNews" class="px-4 py-2 bg-[#C5A059] text-[#061916] font-bold rounded text-xs cursor-pointer">Save News Card</button>
+          <button @click="onSaveNews" class="px-5 py-2 bg-[#C5A059] text-[#061916] font-bold rounded text-xs cursor-pointer hover:bg-[#E5C483]">Save Card</button>
         </div>
       </div>
     </v-dialog>
@@ -991,6 +1069,40 @@ function onDonationBannerFileUpload(event: Event) {
       if (e.target?.result) {
         cms.donationSettings.bannerImage = e.target.result as string
         showToast('Donation banner image uploaded successfully!')
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+}
+
+// News & Occasions File Uploads
+function onNewsFileUpload(event: Event, newsId: number) {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files[0]) {
+    const file = target.files[0]
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      if (e.target?.result) {
+        const item = cms.newsList.find(n => n.id === newsId)
+        if (item) {
+          item.image = e.target.result as string
+          showToast('Occasion image uploaded successfully!')
+        }
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+}
+
+function onNewNewsFileUpload(event: Event) {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files[0]) {
+    const file = target.files[0]
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      if (e.target?.result) {
+        newNews.value.image = e.target.result as string
+        showToast('Image uploaded for occasion!')
       }
     }
     reader.readAsDataURL(file)
