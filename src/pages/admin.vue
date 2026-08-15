@@ -378,10 +378,23 @@
             </div>
           </div>
 
-          <!-- Video Stream URL -->
-          <div>
-            <label class="block text-gray-300 font-bold mb-1">Live Video Stream URL (YouTube Embed / Direct Stream URL)</label>
-            <input v-model="cms.streamSettings.streamUrl" placeholder="https://www.youtube.com/embed/..." class="w-full bg-[#041210] border border-white/20 rounded p-3 text-white font-mono" />
+          <!-- Video Stream URL & Channel URL -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[#EF4444] font-bold mb-1 flex items-center gap-1.5">
+                <v-icon size="16" color="#EF4444">mdi-youtube</v-icon>
+                <span>Live Video Stream URL (YouTube Video Link)</span>
+              </label>
+              <input v-model="cms.streamSettings.streamUrl" placeholder="https://www.youtube.com/watch?v=..." class="w-full bg-[#041210] border border-white/20 rounded p-3 text-white font-mono" />
+            </div>
+
+            <div>
+              <label class="block text-gray-300 font-bold mb-1 flex items-center gap-1.5">
+                <v-icon size="16" color="#C5A059">mdi-play-box-multiple-outline</v-icon>
+                <span>Official YouTube Channel URL</span>
+              </label>
+              <input v-model="cms.streamSettings.channelUrl" placeholder="https://youtube.com/@alkhoeifoundation" class="w-full bg-[#041210] border border-white/20 rounded p-3 text-white font-mono" />
+            </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -403,8 +416,26 @@
               <input v-model="cms.streamSettings.subtitleAr" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white text-right" />
             </div>
 
+            <div class="md:col-span-2">
+              <label class="block text-gray-300 font-bold mb-1">Caption / Description (EN)</label>
+              <textarea v-model="cms.streamSettings.captionEn" rows="2" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white"></textarea>
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-gray-300 font-bold mb-1">Caption / Description (AR)</label>
+              <textarea v-model="cms.streamSettings.captionAr" rows="2" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white text-right"></textarea>
+            </div>
+
             <div>
-              <label class="block text-gray-300 font-bold mb-1">Viewers Counter (e.g. 2.4k)</label>
+              <label class="block text-gray-300 font-bold mb-1">Broadcast Studio Location (EN)</label>
+              <input v-model="cms.streamSettings.locationEn" placeholder="Najaf Al-Ashraf & London" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white" />
+            </div>
+            <div>
+              <label class="block text-gray-300 font-bold mb-1">Broadcast Studio Location (AR)</label>
+              <input v-model="cms.streamSettings.locationAr" placeholder="النجف الأشرف ولندن" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white text-right" />
+            </div>
+
+            <div>
+              <label class="block text-gray-300 font-bold mb-1">Viewers Counter (e.g. 3,850+)</label>
               <input v-model="cms.streamSettings.viewersCount" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white font-mono" />
             </div>
 
@@ -412,7 +443,7 @@
               <label class="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" v-model="cms.streamSettings.isLiveNow" class="sr-only peer" />
                 <div class="w-11 h-6 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
-                <span class="ml-3 text-xs font-bold text-white uppercase">Is Stream Live Right Now?</span>
+                <span class="ml-3 text-xs font-bold text-white uppercase">Is Stream Live Right Now? (مباشر الآن)</span>
               </label>
             </div>
           </div>

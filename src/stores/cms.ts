@@ -58,10 +58,15 @@ export interface StreamSettings {
   titleAr: string
   subtitleEn: string
   subtitleAr: string
+  captionEn?: string
+  captionAr?: string
   coverImage: string
   streamUrl: string
+  channelUrl?: string
   viewersCount: string
   isLiveNow: boolean
+  locationEn?: string
+  locationAr?: string
 }
 
 export interface DonationSettings {
@@ -147,14 +152,19 @@ export const useCmsStore = defineStore('cms', () => {
 
   // Stream Settings
   const streamSettings = ref<StreamSettings>({
-    titleEn: 'Daily Lectures & Majalis',
+    titleEn: 'Daily Live Majalis & Lectures',
     titleAr: 'المجالس والمحاضرات اليومية المباشرة',
-    subtitleEn: 'Streaming Live from Holy Najaf Al-Ashraf & London',
-    subtitleAr: 'بث مباشر من النجف الأشرف ولندن',
+    subtitleEn: 'Global Broadcast from Holy Shrines & Al-Khoei Centers',
+    subtitleAr: 'بث مباشر من العتبات المقدسة ومراكز مؤسسة الخوئي',
+    captionEn: 'Watch our live daily religious sessions, jurisprudence seminars, and commemorative programs streamed directly from the Holy City of Najaf and London studios.',
+    captionAr: 'تابعوا البث المباشر اليومي للمجالس والمحاضرات الفقهية والندوات الفكرية المنقولة مباشرة بجودة عالية من استوديوهات النجف الأشرف ولندن.',
     coverImage: defaultHeroImg,
-    streamUrl: 'https://www.youtube.com/embed/live_stream?channel=alkhoei',
-    viewersCount: '2.4k',
+    streamUrl: 'https://www.youtube.com/watch?v=live',
+    channelUrl: 'https://youtube.com/@alkhoeifoundation',
+    viewersCount: '3,850+',
     isLiveNow: true,
+    locationEn: 'Holy Najaf Al-Ashraf & London Studio',
+    locationAr: 'استوديوهات النجف الأشرف ولندن',
   })
 
   // Donation Global Settings

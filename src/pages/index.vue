@@ -37,6 +37,11 @@
         <LatestNewsSection @view-all-news="scrollToSection('news')" />
       </section>
 
+      <!-- Live Broadcast Stream Dedicated Section (Dark Emerald & Radiant Gold with Animations) -->
+      <section id="live">
+        <LiveBroadcastSection @open-modal="showLiveModal = true" />
+      </section>
+
       <!-- Featured Cards: Donation, Live Lecture, Ask Question (Light Grey Background) -->
       <section id="featured">
         <FeaturedGridSection
@@ -100,6 +105,7 @@ import PrayerTimesSection from '@/components/PrayerTimesSection.vue'
 import QuickActionGrid from '@/components/QuickActionGrid.vue'
 import DonationCampaignsSection from '@/components/DonationCampaignsSection.vue'
 import LatestNewsSection from '@/components/LatestNewsSection.vue'
+import LiveBroadcastSection from '@/components/LiveBroadcastSection.vue'
 import FeaturedGridSection from '@/components/FeaturedGridSection.vue'
 import GlobalPresenceSection from '@/components/GlobalPresenceSection.vue'
 import PillarsFooterBanner from '@/components/PillarsFooterBanner.vue'
