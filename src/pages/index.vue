@@ -27,6 +27,11 @@
         <QuickActionGrid @select-action="handleQuickAction" />
       </section>
 
+      <!-- Donation Campaigns & Causes Carousel (Dark Emerald & Gold Royal Design) -->
+      <section id="campaigns">
+        <DonationCampaignsSection @open-donate="showDonateModal = true" />
+      </section>
+
       <!-- Latest News & Announcements (White Background) -->
       <section id="news">
         <LatestNewsSection @view-all-news="scrollToSection('news')" />
@@ -93,6 +98,7 @@ import AppHeader from '@/components/AppHeader.vue'
 import HeroSection from '@/components/HeroSection.vue'
 import PrayerTimesSection from '@/components/PrayerTimesSection.vue'
 import QuickActionGrid from '@/components/QuickActionGrid.vue'
+import DonationCampaignsSection from '@/components/DonationCampaignsSection.vue'
 import LatestNewsSection from '@/components/LatestNewsSection.vue'
 import FeaturedGridSection from '@/components/FeaturedGridSection.vue'
 import GlobalPresenceSection from '@/components/GlobalPresenceSection.vue'

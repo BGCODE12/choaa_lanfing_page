@@ -113,7 +113,7 @@
           :key="tab.id"
           @click="activeTab = tab.id"
           :class="[
-            'px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap',
+            'px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer',
             activeTab === tab.id
               ? 'bg-[#C5A059] text-[#061916] shadow-lg shadow-[#C5A059]/20'
               : 'bg-[#061916] text-gray-300 hover:bg-white/10 hover:text-white border border-white/10'
@@ -173,10 +173,105 @@
             </div>
           </div>
 
-          <button @click="showToast('Site logo & name settings saved!')" class="px-6 py-2.5 bg-[#C5A059] text-[#061916] font-bold text-xs rounded-lg hover:bg-[#E5C483]">
+          <button @click="showToast('Site logo & name settings saved!')" class="px-6 py-2.5 bg-[#C5A059] text-[#061916] font-bold text-xs rounded-lg hover:bg-[#E5C483] cursor-pointer">
             Save Branding Settings
           </button>
         </div>
+      </div>
+
+      <!-- Tab Content: Donation Campaigns / Types Manager (NEW) -->
+      <div v-if="activeTab === 'campaigns'" class="bg-[#061916] border border-[#C5A059]/30 rounded-2xl p-6 space-y-6 shadow-xl">
+        <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-white/10 pb-4">
+          <div>
+            <h3 class="text-base font-bold font-serif text-white">Donation Campaigns & Causes (إعلانات وأبواب التبرع)</h3>
+            <p class="text-xs text-gray-400">Manage, edit, add and remove donation carousel cards shown on the landing page.</p>
+          </div>
+          <button @click="showAddCampaignModal = true" class="px-4 py-2 bg-[#C5A059] text-[#061916] text-xs font-bold rounded-lg flex items-center gap-1.5 hover:bg-[#E5C483] cursor-pointer self-start">
+            <v-icon size="16">mdi-plus</v-icon>
+            <span>Add New Campaign Card</span>
+          </button>
+        </div>
+
+        <!-- Campaigns Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div
+            v-for="(campaign, index) in cms.donationCampaigns"
+            :key="campaign.id"
+            class="bg-[#041210] border border-white/10 rounded-2xl p-5 space-y-4 shadow-lg flex flex-col justify-between"
+          >
+            <div class="flex justify-between items-center border-b border-white/10 pb-3">
+              <span class="px-2.5 py-1 rounded bg-[#C5A059]/20 text-[#E5C483] text-xs font-mono font-bold">Campaign Card #0{{ index + 1 }}</span>
+              <button @click="cms.removeDonationCampaign(campaign.id)" class="text-xs text-red-400 hover:text-red-300 font-semibold flex items-center gap-1 cursor-pointer">
+                <v-icon size="14">mdi-delete-outline</v-icon> Delete Card
+              </button>
+            </div>
+
+            <!-- Campaign Image Picker -->
+            <div class="bg-[#061916] p-3.5 rounded-xl border border-[#C5A059]/30 space-y-2">
+              <label class="block text-[11px] font-bold text-[#E5C483] uppercase">Campaign Card Image</label>
+              <div class="flex flex-col sm:flex-row items-center gap-2">
+                <label class="px-3 py-2 bg-[#C5A059] text-[#061916] font-bold text-xs rounded cursor-pointer hover:bg-[#E5C483] flex items-center gap-1">
+                  <v-icon size="14">mdi-upload</v-icon>
+                  <span>Upload File</span>
+                  <input type="file" accept="image/*" class="hidden" @change="e => onCampaignFileUpload(e, campaign.id)" />
+                </label>
+                <input v-model="campaign.image" placeholder="Or paste image URL / Base64..." class="flex-1 w-full bg-[#041210] border border-white/20 rounded p-2 text-xs text-white font-mono" />
+              </div>
+              <div v-if="campaign.image" class="h-32 w-full rounded-lg overflow-hidden border border-white/20 mt-2">
+                <img :src="campaign.image" alt="Preview" class="w-full h-full object-cover" />
+              </div>
+            </div>
+
+            <!-- Titles & Category -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div>
+                <label class="block text-gray-400 mb-1 font-semibold">Title (EN)</label>
+                <input v-model="campaign.titleEn" class="w-full bg-[#061916] border border-white/20 rounded p-2.5 text-white font-medium" />
+              </div>
+              <div>
+                <label class="block text-gray-400 mb-1 font-semibold">Title (AR)</label>
+                <input v-model="campaign.titleAr" class="w-full bg-[#061916] border border-white/20 rounded p-2.5 text-white text-right font-medium" />
+              </div>
+
+              <div>
+                <label class="block text-gray-400 mb-1">Category Tag (EN)</label>
+                <input v-model="campaign.categoryEn" class="w-full bg-[#061916] border border-white/20 rounded p-2 text-white" />
+              </div>
+              <div>
+                <label class="block text-gray-400 mb-1">Category Tag (AR)</label>
+                <input v-model="campaign.categoryAr" class="w-full bg-[#061916] border border-white/20 rounded p-2 text-white text-right" />
+              </div>
+
+              <div class="sm:col-span-2">
+                <label class="block text-gray-400 mb-1">Caption / Description (EN)</label>
+                <textarea v-model="campaign.captionEn" rows="2" class="w-full bg-[#061916] border border-white/20 rounded p-2 text-white"></textarea>
+              </div>
+              <div class="sm:col-span-2">
+                <label class="block text-gray-400 mb-1">Caption / Description (AR)</label>
+                <textarea v-model="campaign.captionAr" rows="2" class="w-full bg-[#061916] border border-white/20 rounded p-2 text-white text-right"></textarea>
+              </div>
+
+              <div>
+                <label class="block text-gray-400 mb-1">Target Amount (Optional)</label>
+                <input v-model="campaign.targetAmount" placeholder="$100,000" class="w-full bg-[#061916] border border-white/20 rounded p-2 text-white font-mono" />
+              </div>
+              <div>
+                <label class="block text-gray-400 mb-1">Raised Amount (Optional)</label>
+                <input v-model="campaign.raisedAmount" placeholder="$65,000" class="w-full bg-[#061916] border border-white/20 rounded p-2 text-white font-mono" />
+              </div>
+
+              <div class="sm:col-span-2">
+                <label class="block text-gray-400 mb-1">Direct Custom Donate URL (Optional)</label>
+                <input v-model="campaign.customDonateUrl" placeholder="https://al-khoei.org/donate/..." class="w-full bg-[#061916] border border-white/20 rounded p-2 text-white font-mono" />
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <button @click="showToast('Donation campaigns saved successfully!')" class="px-6 py-2.5 bg-[#C5A059] text-[#061916] font-bold text-xs rounded-lg hover:bg-[#E5C483] cursor-pointer">
+          Save All Campaigns Changes
+        </button>
       </div>
 
       <!-- Tab Content 1: Header Navigation Links -->
@@ -186,7 +281,7 @@
             <h3 class="text-base font-bold font-serif text-white">Header Navigation Links</h3>
             <p class="text-xs text-gray-400">Add, edit, or remove menu links shown in the top navigation bar.</p>
           </div>
-          <button @click="showAddNavModal = true" class="px-4 py-2 bg-[#C5A059] text-[#061916] text-xs font-bold rounded-lg flex items-center gap-1.5 hover:bg-[#E5C483]">
+          <button @click="showAddNavModal = true" class="px-4 py-2 bg-[#C5A059] text-[#061916] text-xs font-bold rounded-lg flex items-center gap-1.5 hover:bg-[#E5C483] cursor-pointer">
             <v-icon size="16">mdi-plus</v-icon>
             <span>Add Link</span>
           </button>
@@ -200,7 +295,7 @@
               <p class="text-xs font-mono text-gray-400 mt-1">{{ nav.link }}</p>
             </div>
             <div class="flex justify-end gap-2 pt-2 border-t border-white/10">
-              <button @click="cms.removeNavLink(nav.id)" class="text-xs text-red-400 hover:text-red-300 font-semibold flex items-center gap-1">
+              <button @click="cms.removeNavLink(nav.id)" class="text-xs text-red-400 hover:text-red-300 font-semibold flex items-center gap-1 cursor-pointer">
                 <v-icon size="14">mdi-delete-outline</v-icon> Delete
               </button>
             </div>
@@ -322,7 +417,7 @@
             </div>
           </div>
 
-          <button @click="showToast('Live stream settings updated successfully!')" class="px-6 py-2.5 bg-[#C5A059] text-[#061916] font-bold text-xs rounded-lg hover:bg-[#E5C483]">
+          <button @click="showToast('Live stream settings updated successfully!')" class="px-6 py-2.5 bg-[#C5A059] text-[#061916] font-bold text-xs rounded-lg hover:bg-[#E5C483] cursor-pointer">
             Save Stream Settings
           </button>
         </div>
@@ -375,7 +470,7 @@
             </div>
           </div>
 
-          <button @click="showToast('Donation settings updated successfully!')" class="px-6 py-2.5 bg-[#C5A059] text-[#061916] font-bold text-xs rounded-lg hover:bg-[#E5C483]">
+          <button @click="showToast('Donation settings updated successfully!')" class="px-6 py-2.5 bg-[#C5A059] text-[#061916] font-bold text-xs rounded-lg hover:bg-[#E5C483] cursor-pointer">
             Save Donation Settings
           </button>
         </div>
@@ -406,7 +501,7 @@
             </div>
           </div>
 
-          <button @click="showToast('Fatwa & Questions link updated successfully!')" class="px-6 py-2.5 bg-[#C5A059] text-[#061916] font-bold text-xs rounded-lg hover:bg-[#E5C483]">
+          <button @click="showToast('Fatwa & Questions link updated successfully!')" class="px-6 py-2.5 bg-[#C5A059] text-[#061916] font-bold text-xs rounded-lg hover:bg-[#E5C483] cursor-pointer">
             Save Fatwa Link Settings
           </button>
         </div>
@@ -460,7 +555,7 @@
             <input v-model="cms.socialLinks.telegram" placeholder="https://t.me/your-channel" class="w-full bg-[#041210] border border-white/20 rounded p-3 text-white font-mono" />
           </div>
 
-          <button @click="showToast('Social media links updated successfully!')" class="px-6 py-2.5 bg-[#C5A059] text-[#061916] font-bold text-xs rounded-lg hover:bg-[#E5C483]">
+          <button @click="showToast('Social media links updated successfully!')" class="px-6 py-2.5 bg-[#C5A059] text-[#061916] font-bold text-xs rounded-lg hover:bg-[#E5C483] cursor-pointer">
             Save Social Media Links
           </button>
         </div>
@@ -501,7 +596,7 @@
           </div>
         </div>
 
-        <button @click="showToast('Prayer times updated successfully!')" class="px-6 py-2.5 bg-[#C5A059] text-[#061916] font-bold text-xs rounded-lg hover:bg-[#E5C483]">
+        <button @click="showToast('Prayer times updated successfully!')" class="px-6 py-2.5 bg-[#C5A059] text-[#061916] font-bold text-xs rounded-lg hover:bg-[#E5C483] cursor-pointer">
           Save Prayer Times
         </button>
       </div>
@@ -513,7 +608,7 @@
             <h3 class="text-base font-bold font-serif text-white">News & Announcements CMS</h3>
             <p class="text-xs text-gray-400">Add, edit, or remove news cards displayed on the landing page.</p>
           </div>
-          <button @click="showAddNewsModal = true" class="px-4 py-2 bg-[#C5A059] text-[#061916] text-xs font-bold rounded-lg flex items-center gap-1.5 hover:bg-[#E5C483]">
+          <button @click="showAddNewsModal = true" class="px-4 py-2 bg-[#C5A059] text-[#061916] text-xs font-bold rounded-lg flex items-center gap-1.5 hover:bg-[#E5C483] cursor-pointer">
             <v-icon size="16">mdi-plus</v-icon>
             <span>Add News Card</span>
           </button>
@@ -523,7 +618,7 @@
           <div v-for="news in cms.newsList" :key="news.id" class="bg-[#041210] border border-white/10 rounded-xl p-4 space-y-3">
             <div class="flex justify-between items-start">
               <span class="text-[10px] font-bold text-[#C5A059] uppercase tracking-wider">{{ news.month }} {{ news.day }} • {{ news.category }}</span>
-              <button @click="cms.removeNewsItem(news.id)" class="text-xs text-red-400 hover:text-red-300 font-semibold flex items-center gap-1">
+              <button @click="cms.removeNewsItem(news.id)" class="text-xs text-red-400 hover:text-red-300 font-semibold flex items-center gap-1 cursor-pointer">
                 <v-icon size="14">mdi-delete-outline</v-icon> Delete
               </button>
             </div>
@@ -546,7 +641,7 @@
             <input v-model="newPin" type="password" placeholder="Enter new passcode..." class="w-full bg-[#041210] border border-white/20 rounded p-3 text-white font-mono" />
           </div>
 
-          <button @click="onChangePin" class="px-6 py-2.5 bg-[#C5A059] text-[#061916] font-bold text-xs rounded-lg hover:bg-[#E5C483]">
+          <button @click="onChangePin" class="px-6 py-2.5 bg-[#C5A059] text-[#061916] font-bold text-xs rounded-lg hover:bg-[#E5C483] cursor-pointer">
             Update Admin PIN
           </button>
         </div>
@@ -565,8 +660,8 @@
           <input v-model="newNav.link" placeholder="Anchor / URL (e.g. #fatwas)" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white" />
         </div>
         <div class="flex justify-end gap-2 pt-2">
-          <button @click="showAddNavModal = false" class="px-4 py-2 bg-gray-700 text-white rounded text-xs">Cancel</button>
-          <button @click="onSaveNav" class="px-4 py-2 bg-[#C5A059] text-[#061916] font-bold rounded text-xs">Save Link</button>
+          <button @click="showAddNavModal = false" class="px-4 py-2 bg-gray-700 text-white rounded text-xs cursor-pointer">Cancel</button>
+          <button @click="onSaveNav" class="px-4 py-2 bg-[#C5A059] text-[#061916] font-bold rounded text-xs cursor-pointer">Save Link</button>
         </div>
       </div>
     </v-dialog>
@@ -603,6 +698,88 @@
       </div>
     </v-dialog>
 
+    <!-- Modal: Add Donation Campaign Card (NEW) -->
+    <v-dialog v-model="showAddCampaignModal" max-width="650">
+      <div class="bg-[#061916] border border-[#C5A059]/40 rounded-3xl p-6 text-white space-y-4 shadow-2xl">
+        <div class="flex justify-between items-center border-b border-white/10 pb-3">
+          <h4 class="text-base font-bold font-serif text-[#E5C483] flex items-center gap-2">
+            <v-icon color="#C5A059">mdi-hand-heart</v-icon>
+            <span>Add New Donation Campaign Card</span>
+          </h4>
+          <button @click="showAddCampaignModal = false" class="text-gray-400 hover:text-white cursor-pointer"><v-icon size="18">mdi-close</v-icon></button>
+        </div>
+
+        <div class="space-y-4 text-xs">
+          
+          <!-- Image Upload Box -->
+          <div class="bg-[#041210] p-4 rounded-xl border border-[#C5A059]/30 space-y-2">
+            <label class="block text-xs font-bold text-[#E5C483] uppercase">Campaign Card Image</label>
+            <div class="flex items-center gap-2">
+              <label class="px-3 py-2 bg-[#C5A059] text-[#061916] font-bold text-xs rounded cursor-pointer hover:bg-[#E5C483] flex items-center gap-1">
+                <v-icon size="14">mdi-upload</v-icon>
+                <span>Upload File</span>
+                <input type="file" accept="image/*" class="hidden" @change="onNewCampaignFileUpload" />
+              </label>
+              <input v-model="newCampaign.image" placeholder="Or paste image URL / Base64..." class="flex-1 bg-[#061916] border border-white/20 rounded p-2 text-xs text-white font-mono" />
+            </div>
+
+            <div v-if="newCampaign.image" class="h-32 w-full rounded-lg overflow-hidden border border-white/20 mt-2">
+              <img :src="newCampaign.image" alt="Preview" class="w-full h-full object-cover" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-gray-300 font-bold mb-1">Title (EN)</label>
+              <input v-model="newCampaign.titleEn" placeholder="e.g. Orphans Sponsorship" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white" />
+            </div>
+            <div>
+              <label class="block text-gray-300 font-bold mb-1">Title (AR)</label>
+              <input v-model="newCampaign.titleAr" placeholder="مثال: كفالة ورعاية الأيتام" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white text-right" />
+            </div>
+
+            <div>
+              <label class="block text-gray-300 font-bold mb-1">Category Tag (EN)</label>
+              <input v-model="newCampaign.categoryEn" placeholder="ORPHAN CARE" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white" />
+            </div>
+            <div>
+              <label class="block text-gray-300 font-bold mb-1">Category Tag (AR)</label>
+              <input v-model="newCampaign.categoryAr" placeholder="رعاية الأيتام" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white text-right" />
+            </div>
+
+            <div class="sm:col-span-2">
+              <label class="block text-gray-300 font-bold mb-1">Caption / Description (EN)</label>
+              <textarea v-model="newCampaign.captionEn" rows="2" placeholder="Brief description of the cause..." class="w-full bg-[#041210] border border-white/20 rounded p-2 text-white"></textarea>
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-gray-300 font-bold mb-1">Caption / Description (AR)</label>
+              <textarea v-model="newCampaign.captionAr" rows="2" placeholder="وصف موجز للمشروع وأثره..." class="w-full bg-[#041210] border border-white/20 rounded p-2 text-white text-right"></textarea>
+            </div>
+
+            <div>
+              <label class="block text-gray-300 font-bold mb-1">Target Amount (Optional)</label>
+              <input v-model="newCampaign.targetAmount" placeholder="$100,000" class="w-full bg-[#041210] border border-white/20 rounded p-2 text-white font-mono" />
+            </div>
+            <div>
+              <label class="block text-gray-300 font-bold mb-1">Raised Amount (Optional)</label>
+              <input v-model="newCampaign.raisedAmount" placeholder="$65,000" class="w-full bg-[#041210] border border-white/20 rounded p-2 text-white font-mono" />
+            </div>
+
+            <div class="sm:col-span-2">
+              <label class="block text-gray-300 font-bold mb-1">Direct Custom Donate URL (Optional)</label>
+              <input v-model="newCampaign.customDonateUrl" placeholder="https://al-khoei.org/donate/..." class="w-full bg-[#041210] border border-white/20 rounded p-2 text-white font-mono" />
+            </div>
+          </div>
+
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-white/10">
+          <button @click="showAddCampaignModal = false" class="px-4 py-2 bg-gray-700 text-white rounded text-xs cursor-pointer">Cancel</button>
+          <button @click="onSaveCampaign" class="px-5 py-2 bg-[#C5A059] text-[#061916] font-bold rounded text-xs cursor-pointer hover:bg-[#E5C483]">Save Campaign Card</button>
+        </div>
+      </div>
+    </v-dialog>
+
     <!-- Modal: Add News Item -->
     <v-dialog v-model="showAddNewsModal" max-width="600">
       <div class="bg-[#061916] border border-[#C5A059]/40 rounded-2xl p-6 text-white space-y-4">
@@ -619,8 +796,8 @@
           <textarea v-model="newNews.summaryAr" placeholder="Summary (AR)" rows="2" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white text-right"></textarea>
         </div>
         <div class="flex justify-end gap-2 pt-2">
-          <button @click="showAddNewsModal = false" class="px-4 py-2 bg-gray-700 text-white rounded text-xs">Cancel</button>
-          <button @click="onSaveNews" class="px-4 py-2 bg-[#C5A059] text-[#061916] font-bold rounded text-xs">Save News Card</button>
+          <button @click="showAddNewsModal = false" class="px-4 py-2 bg-gray-700 text-white rounded text-xs cursor-pointer">Cancel</button>
+          <button @click="onSaveNews" class="px-4 py-2 bg-[#C5A059] text-[#061916] font-bold rounded text-xs cursor-pointer">Save News Card</button>
         </div>
       </div>
     </v-dialog>
@@ -643,8 +820,9 @@ const activeTab = ref('branding')
 
 const tabs = [
   { id: 'branding', label: 'Site Logo & Name', icon: 'mdi-earth-box-plus' },
+  { id: 'campaigns', label: 'Donation Campaigns (أنواع التبرعات)', icon: 'mdi-hand-heart' },
+  { id: 'hero', label: 'Hero Image Carousel', icon: 'mdi-view-carousel-outline' },
   { id: 'nav', label: 'Header Nav Links', icon: 'mdi-link-variant' },
-  { id: 'hero', label: 'Hero Carousel & Buttons', icon: 'mdi-view-carousel-outline' },
   { id: 'stream', label: 'Live Broadcast Stream', icon: 'mdi-video-wireless-outline' },
   { id: 'donate', label: 'Donation Settings & Links', icon: 'mdi-hand-heart-outline' },
   { id: 'fatwas', label: 'Fatwas & Questions Link', icon: 'mdi-chat-question-outline' },
@@ -724,6 +902,40 @@ function onNewSlideFileUpload(event: Event) {
   }
 }
 
+// Donation Campaign File Uploads
+function onCampaignFileUpload(event: Event, campaignId: number) {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files[0]) {
+    const file = target.files[0]
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      if (e.target?.result) {
+        const camp = cms.donationCampaigns.find(c => c.id === campaignId)
+        if (camp) {
+          camp.image = e.target.result as string
+          showToast('Campaign image uploaded successfully!')
+        }
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+}
+
+function onNewCampaignFileUpload(event: Event) {
+  const target = event.target as HTMLInputElement
+  if (target.files && target.files[0]) {
+    const file = target.files[0]
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      if (e.target?.result) {
+        newCampaign.value.image = e.target.result as string
+        showToast('Image uploaded for campaign!')
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+}
+
 function onStreamCoverFileUpload(event: Event) {
   const target = event.target as HTMLInputElement
   if (target.files && target.files[0]) {
@@ -784,14 +996,14 @@ const newSlide = ref({
   subTaglineAr: '',
   descriptionEn: '',
   descriptionAr: '',
-  primaryBtnEn: 'OUR PROGRAMS',
-  primaryBtnAr: 'برامجنا',
-  secondaryBtnEn: 'DONATE NOW',
-  secondaryBtnAr: 'تبرع الآن',
-  primaryAction: 'programs',
-  secondaryAction: 'donate',
-  primaryBtnLink: '#programs',
-  secondaryBtnLink: '#donate',
+  primaryBtnEn: '',
+  primaryBtnAr: '',
+  secondaryBtnEn: '',
+  secondaryBtnAr: '',
+  primaryAction: '',
+  secondaryAction: '',
+  primaryBtnLink: '',
+  secondaryBtnLink: '',
 })
 
 function onSaveSlide() {
@@ -820,6 +1032,54 @@ function onSaveSlide() {
     showToast('New Hero Image Slide added successfully!')
   } else {
     showToast('Please upload or enter an image URL first.')
+  }
+}
+
+// Donation Campaign Modal State (NEW)
+const showAddCampaignModal = ref(false)
+const newCampaign = ref({
+  titleEn: '',
+  titleAr: '',
+  categoryEn: 'RELIEF APPEAL',
+  categoryAr: 'حملة إغاثة',
+  captionEn: '',
+  captionAr: '',
+  image: '',
+  targetAmount: '',
+  raisedAmount: '',
+  customDonateUrl: '',
+})
+
+function onSaveCampaign() {
+  if (newCampaign.value.titleEn || newCampaign.value.titleAr) {
+    cms.addDonationCampaign({
+      titleEn: newCampaign.value.titleEn || newCampaign.value.titleAr,
+      titleAr: newCampaign.value.titleAr || newCampaign.value.titleEn,
+      categoryEn: newCampaign.value.categoryEn || 'RELIEF APPEAL',
+      categoryAr: newCampaign.value.categoryAr || 'حملة إغاثة',
+      captionEn: newCampaign.value.captionEn || '',
+      captionAr: newCampaign.value.captionAr || '',
+      image: newCampaign.value.image,
+      targetAmount: newCampaign.value.targetAmount,
+      raisedAmount: newCampaign.value.raisedAmount,
+      customDonateUrl: newCampaign.value.customDonateUrl,
+    })
+    newCampaign.value = {
+      titleEn: '',
+      titleAr: '',
+      categoryEn: 'RELIEF APPEAL',
+      categoryAr: 'حملة إغاثة',
+      captionEn: '',
+      captionAr: '',
+      image: '',
+      targetAmount: '',
+      raisedAmount: '',
+      customDonateUrl: '',
+    }
+    showAddCampaignModal.value = false
+    showToast('New Donation Campaign Card added successfully!')
+  } else {
+    showToast('Please enter a campaign title.')
   }
 }
 

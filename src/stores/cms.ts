@@ -31,6 +31,20 @@ export interface HeroSlide {
   bgImage?: string
 }
 
+export interface DonationCampaign {
+  id: number
+  titleEn: string
+  titleAr: string
+  categoryEn: string
+  categoryAr: string
+  captionEn: string
+  captionAr: string
+  image: string
+  targetAmount?: string
+  raisedAmount?: string
+  customDonateUrl?: string
+}
+
 export interface SocialLinks {
   facebook: string
   youtube: string
@@ -143,7 +157,7 @@ export const useCmsStore = defineStore('cms', () => {
     isLiveNow: true,
   })
 
-  // Donation Settings
+  // Donation Global Settings
   const donationSettings = ref<DonationSettings>({
     titleEn: 'Make a Donation',
     titleAr: 'ساهم في التبرعات والصدقات',
@@ -154,6 +168,62 @@ export const useCmsStore = defineStore('cms', () => {
     bankDetailsEn: 'Al-Khoei Foundation • Account: 12345678 • IBAN: GB123456789',
     bankDetailsAr: 'مؤسسة الخوئي الخيرية • الحساب المصرفي: 12345678',
   })
+
+  // Donation Campaigns & Types (New Section Carousel Cards)
+  const donationCampaigns = ref<DonationCampaign[]>([
+    {
+      id: 1,
+      titleEn: 'Orphans & Widows Full Sponsorship',
+      titleAr: 'كفالة ورعاية الأيتام والأرامل',
+      categoryEn: 'ORPHAN CARE',
+      categoryAr: 'رعاية الأيتام',
+      captionEn: 'Providing complete monthly living stipends, healthcare, education, and housing security for thousands of vulnerable orphans and families.',
+      captionAr: 'توفير الكفالة الشهرية الشاملة والرعاية الصحية والتعليمية والمسكن الكريم لآلاف الأيتام والعوائل الكريمة.',
+      image: defaultHeroImg,
+      targetAmount: '$150,000',
+      raisedAmount: '$92,400',
+      customDonateUrl: 'https://al-khoei.org/donate',
+    },
+    {
+      id: 2,
+      titleEn: 'Clean Drinking Water & Deep Wells',
+      titleAr: 'سقيا الماء وحفر الآبار الارتوازية',
+      categoryEn: 'WATER RELIEF',
+      categoryAr: 'سقيا الماء',
+      captionEn: 'Drilling sustainable deep wells and installing water purification stations in remote villages facing severe drought.',
+      captionAr: 'حفر الآبار الارتوازية ومحطات تنقية المياه في القرى والمناطق النائية لمواجهة الجفاف وتوفير مياه الشرب النقية.',
+      image: defaultHeroImg,
+      targetAmount: '$80,000',
+      raisedAmount: '$64,200',
+      customDonateUrl: 'https://al-khoei.org/donate',
+    },
+    {
+      id: 3,
+      titleEn: 'Emergency Medical & Surgical Aid',
+      titleAr: 'المساعدات العلاجية والعمليات الجراحية',
+      categoryEn: 'HEALTHCARE',
+      categoryAr: 'الرعاية الصحية',
+      captionEn: 'Funding critical surgeries, chronic disease medication, and mobile clinics for patients without access to healthcare.',
+      captionAr: 'تحمل تكاليف العمليات الجراحية الحرجة وتوفير الأدوية للأمراض المزمنة وتسيير العيادات الطبية للمرضى المحتاجين.',
+      image: defaultHeroImg,
+      targetAmount: '$120,000',
+      raisedAmount: '$78,900',
+      customDonateUrl: 'https://al-khoei.org/donate',
+    },
+    {
+      id: 4,
+      titleEn: 'Essential Food Baskets & Relief',
+      titleAr: 'السلال الغذائية وإغاثة العوائل المتعففة',
+      categoryEn: 'FOOD SECURITY',
+      categoryAr: 'الأمن الغذائي',
+      captionEn: 'Delivering nutritionally balanced dry rations, fresh food parcels, and seasonal Ramadan sustenance packages.',
+      captionAr: 'توزيع السلال الغذائية المتكاملة والمواد التموينية الأساسية لإغاثة العوائل المتعففة في مختلف البلدان.',
+      image: defaultHeroImg,
+      targetAmount: '$100,000',
+      raisedAmount: '$85,000',
+      customDonateUrl: 'https://al-khoei.org/donate',
+    },
+  ])
 
   // Fatwa / Ask Questions Settings
   const fatwaSettings = ref<FatwaSettings>({
@@ -168,12 +238,12 @@ export const useCmsStore = defineStore('cms', () => {
   const navLinks = ref<NavLink[]>([
     { id: '1', key: 'home', labelEn: 'Home', labelAr: 'الرئيسية', link: '#home' },
     { id: '2', key: 'about', labelEn: 'About Us', labelAr: 'من نحن', link: '#about' },
-    { id: '3', key: 'programs', labelEn: 'Programs', labelAr: 'البرامج', link: '#programs' },
-    { id: '4', key: 'institutions', labelEn: 'Institutions', labelAr: 'المؤسسات', link: '#institutions' },
-    { id: '5', key: 'library', labelEn: 'Library', labelAr: 'المكتبة', link: '#library' },
-    { id: '6', key: 'news', labelEn: 'News & Events', labelAr: 'الأخبار والأحداث', link: '#news' },
-    { id: '7', key: 'fatwas', labelEn: 'Fatwas', labelAr: 'الاستفتاءات', link: 'https://al-khoei.org/fatwas' },
-    { id: '8', key: 'live', labelEn: 'Live', labelAr: 'البث المباشر', link: '#live' },
+    { id: '3', key: 'campaigns', labelEn: 'Donations', labelAr: 'التبرعات', link: '#campaigns' },
+    { id: '4', key: 'programs', labelEn: 'Programs', labelAr: 'البرامج', link: '#programs' },
+    { id: '5', key: 'institutions', labelEn: 'Institutions', labelAr: 'المؤسسات', link: '#institutions' },
+    { id: '6', key: 'library', labelEn: 'Library', labelAr: 'المكتبة', link: '#library' },
+    { id: '7', key: 'news', labelEn: 'News & Events', labelAr: 'الأخبار والأحداث', link: '#news' },
+    { id: '8', key: 'fatwas', labelEn: 'Fatwas', labelAr: 'الاستفتاءات', link: 'https://al-khoei.org/fatwas' },
     { id: '9', key: 'contact', labelEn: 'Contact', labelAr: 'اتصل بنا', link: '#contact' },
   ])
 
@@ -416,6 +486,7 @@ export const useCmsStore = defineStore('cms', () => {
         if (data.socialLinks) socialLinks.value = data.socialLinks
         if (data.streamSettings) streamSettings.value = data.streamSettings
         if (data.donationSettings) donationSettings.value = data.donationSettings
+        if (data.donationCampaigns && Array.isArray(data.donationCampaigns)) donationCampaigns.value = data.donationCampaigns
         if (data.fatwaSettings) fatwaSettings.value = data.fatwaSettings
         if (data.navLinks) navLinks.value = data.navLinks
         if (data.heroSlides) heroSlides.value = data.heroSlides
@@ -438,6 +509,7 @@ export const useCmsStore = defineStore('cms', () => {
       socialLinks: socialLinks.value,
       streamSettings: streamSettings.value,
       donationSettings: donationSettings.value,
+      donationCampaigns: donationCampaigns.value,
       fatwaSettings: fatwaSettings.value,
       navLinks: navLinks.value,
       heroSlides: heroSlides.value,
@@ -456,7 +528,7 @@ export const useCmsStore = defineStore('cms', () => {
 
   // Watch for changes and save automatically
   watch(
-    [adminPin, siteSettings, socialLinks, streamSettings, donationSettings, fatwaSettings, navLinks, heroSlides, prayerTimes, quickActions, newsList, presenceStats, institutions, footerInfo],
+    [adminPin, siteSettings, socialLinks, streamSettings, donationSettings, donationCampaigns, fatwaSettings, navLinks, heroSlides, prayerTimes, quickActions, newsList, presenceStats, institutions, footerInfo],
     () => {
       saveToStorage()
     },
@@ -502,6 +574,23 @@ export const useCmsStore = defineStore('cms', () => {
     heroSlides.value = heroSlides.value.filter(s => s.id !== id)
   }
 
+  // Donation Campaigns Management (New)
+  function addDonationCampaign(campaign: Omit<DonationCampaign, 'id'>) {
+    const id = Date.now()
+    donationCampaigns.value.unshift({ id, ...campaign })
+  }
+
+  function updateDonationCampaign(id: number, updated: Partial<DonationCampaign>) {
+    const idx = donationCampaigns.value.findIndex(c => c.id === id)
+    if (idx !== -1) {
+      donationCampaigns.value[idx] = { ...donationCampaigns.value[idx], ...updated }
+    }
+  }
+
+  function removeDonationCampaign(id: number) {
+    donationCampaigns.value = donationCampaigns.value.filter(c => c.id !== id)
+  }
+
   // News Management
   function addNewsItem(news: Omit<NewsItem, 'id'>) {
     const id = Date.now()
@@ -529,6 +618,7 @@ export const useCmsStore = defineStore('cms', () => {
     socialLinks,
     streamSettings,
     donationSettings,
+    donationCampaigns,
     fatwaSettings,
     navLinks,
     heroSlides,
@@ -546,6 +636,9 @@ export const useCmsStore = defineStore('cms', () => {
     removeNavLink,
     addHeroSlide,
     removeHeroSlide,
+    addDonationCampaign,
+    updateDonationCampaign,
+    removeDonationCampaign,
     addNewsItem,
     removeNewsItem,
     addQuickAction,
