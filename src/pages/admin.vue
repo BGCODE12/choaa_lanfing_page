@@ -212,114 +212,48 @@
       <div v-if="activeTab === 'hero'" class="bg-[#061916] border border-[#C5A059]/30 rounded-2xl p-6 space-y-6 shadow-xl">
         <div class="flex justify-between items-center border-b border-white/10 pb-4">
           <div>
-            <h3 class="text-base font-bold font-serif text-white">Hero Carousel & Buttons Links</h3>
-            <p class="text-xs text-gray-400">Manage hero slider titles, descriptions, button labels, custom button URLs, and background images.</p>
+            <h3 class="text-base font-bold font-serif text-white">Hero Image Carousel (معرض صور الهيرو)</h3>
+            <p class="text-xs text-gray-400">Manage, upload and add high-resolution background images for the Hero carousel.</p>
           </div>
-          <button @click="showAddSlideModal = true" class="px-4 py-2 bg-[#C5A059] text-[#061916] text-xs font-bold rounded-lg flex items-center gap-1.5 hover:bg-[#E5C483]">
-            <v-icon size="16">mdi-plus</v-icon>
-            <span>Add New Slide</span>
+          <button @click="showAddSlideModal = true" class="px-4 py-2 bg-[#C5A059] text-[#061916] text-xs font-bold rounded-lg flex items-center gap-1.5 hover:bg-[#E5C483] cursor-pointer">
+            <v-icon size="16">mdi-image-plus</v-icon>
+            <span>Add New Image Slide</span>
           </button>
         </div>
 
-        <div class="space-y-4">
-          <div v-for="(slide, index) in cms.heroSlides" :key="slide.id" class="bg-[#041210] border border-white/10 rounded-xl p-5 space-y-4">
-            <div class="flex justify-between items-start border-b border-white/10 pb-3">
-              <span class="px-2.5 py-1 rounded bg-[#C5A059]/20 text-[#E5C483] text-xs font-mono font-bold">Slide #0{{ index + 1 }}</span>
-              <button @click="cms.removeHeroSlide(slide.id)" class="text-xs text-red-400 hover:text-red-300 font-semibold flex items-center gap-1">
-                <v-icon size="14">mdi-delete-outline</v-icon> Delete Slide
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div v-for="(slide, index) in cms.heroSlides" :key="slide.id" class="bg-[#041210] border border-white/10 rounded-2xl p-4 flex flex-col justify-between gap-4 shadow-lg hover:border-[#C5A059]/50 transition-all">
+            <div class="flex justify-between items-center">
+              <span class="px-2.5 py-1 rounded bg-[#C5A059]/20 text-[#E5C483] text-xs font-mono font-bold">Image #0{{ index + 1 }}</span>
+              <button @click="cms.removeHeroSlide(slide.id)" class="text-xs text-red-400 hover:text-red-300 font-semibold flex items-center gap-1 cursor-pointer">
+                <v-icon size="14">mdi-delete-outline</v-icon> Delete
               </button>
             </div>
 
-            <!-- Image File Upload & URL Field -->
-            <div class="bg-[#061916] p-4 rounded-xl border border-[#C5A059]/30 space-y-3">
-              <div class="flex items-center justify-between">
-                <label class="block text-xs font-bold text-[#E5C483] uppercase tracking-wider flex items-center gap-1.5">
-                  <v-icon size="16">mdi-image-plus-outline</v-icon>
-                  <span>Hero Background Image (Upload File or URL)</span>
-                </label>
-                <span class="text-[10px] text-gray-400">Directly pick image from device</span>
-              </div>
-
-              <div class="flex flex-col sm:flex-row items-center gap-3">
-                <label class="px-4 py-2.5 bg-[#C5A059] text-[#061916] font-extrabold text-xs rounded-lg cursor-pointer hover:bg-[#E5C483] flex items-center gap-1.5 shadow-md transition-all">
-                  <v-icon size="16">mdi-upload</v-icon>
-                  <span>Upload Image File</span>
-                  <input type="file" accept="image/*" class="hidden" @change="e => onSlideFileUpload(e, slide.id)" />
-                </label>
-
-                <span class="text-xs text-gray-500 uppercase font-mono">OR</span>
-
-                <input
-                  v-model="slide.bgImage"
-                  placeholder="Paste Image URL / Data Base64..."
-                  class="flex-1 w-full bg-[#041210] border border-white/20 rounded-lg p-2.5 text-xs text-white font-mono"
-                />
-              </div>
-
-              <div v-if="slide.bgImage" class="relative h-28 w-full max-w-xs rounded-lg overflow-hidden border border-white/20 mt-2">
-                <img :src="slide.bgImage" alt="Preview" class="w-full h-full object-cover" />
-                <span class="absolute bottom-1 right-1 bg-black/80 text-white text-[9px] px-2 py-0.5 rounded font-mono">Image Loaded</span>
-              </div>
+            <!-- Image Preview Box -->
+            <div class="relative h-44 w-full rounded-xl overflow-hidden border border-white/15 bg-black">
+              <img :src="slide.bgImage" alt="Slide Image Preview" class="w-full h-full object-cover" />
+              <span class="absolute bottom-2 right-2 bg-black/80 text-white text-[9px] px-2 py-0.5 rounded font-mono">Active</span>
             </div>
 
-            <!-- Action Buttons Controls (Primary & Secondary Button Labels + Links) -->
-            <div class="bg-[#061916] p-4 rounded-xl border border-white/10 space-y-3">
-              <h5 class="text-xs font-bold text-[#E5C483] uppercase tracking-wider flex items-center gap-1.5">
-                <v-icon size="16">mdi-cursor-default-click-outline</v-icon>
-                <span>Carousel Slide Action Buttons & Custom Target Links</span>
-              </h5>
+            <!-- Upload Controls -->
+            <div class="space-y-2">
+              <label class="w-full py-2 bg-[#C5A059] text-[#061916] font-bold text-xs rounded-lg cursor-pointer hover:bg-[#E5C483] flex items-center justify-center gap-1.5 transition-all">
+                <v-icon size="16">mdi-upload</v-icon>
+                <span>Upload New File</span>
+                <input type="file" accept="image/*" class="hidden" @change="e => onSlideFileUpload(e, slide.id)" />
+              </label>
 
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                <!-- Primary Button -->
-                <div class="p-3 bg-[#041210] rounded-lg border border-white/10 space-y-2">
-                  <span class="text-[#C5A059] font-bold block">Primary Button (Gold)</span>
-                  <input v-model="slide.primaryBtnEn" placeholder="Label (EN)" class="w-full bg-[#061916] border border-white/20 rounded p-2 text-white" />
-                  <input v-model="slide.primaryBtnAr" placeholder="Label (AR)" class="w-full bg-[#061916] border border-white/20 rounded p-2 text-white text-right" />
-                  <input v-model="slide.primaryBtnLink" placeholder="Target Link (e.g. #programs or https://...)" class="w-full bg-[#061916] border border-white/20 rounded p-2 text-white font-mono" />
-                </div>
-
-                <!-- Secondary Button -->
-                <div class="p-3 bg-[#041210] rounded-lg border border-white/10 space-y-2">
-                  <span class="text-gray-300 font-bold block">Secondary Button (Glass)</span>
-                  <input v-model="slide.secondaryBtnEn" placeholder="Label (EN)" class="w-full bg-[#061916] border border-white/20 rounded p-2 text-white" />
-                  <input v-model="slide.secondaryBtnAr" placeholder="Label (AR)" class="w-full bg-[#061916] border border-white/20 rounded p-2 text-white text-right" />
-                  <input v-model="slide.secondaryBtnLink" placeholder="Target Link (e.g. #donate or https://...)" class="w-full bg-[#061916] border border-white/20 rounded p-2 text-white font-mono" />
-                </div>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-              <div>
-                <label class="block text-gray-400 mb-1">Tagline (EN)</label>
-                <input v-model="slide.taglineEn" class="w-full bg-[#061916] border border-white/20 rounded p-2 text-white" />
-              </div>
-              <div>
-                <label class="block text-gray-400 mb-1">Tagline (AR)</label>
-                <input v-model="slide.taglineAr" class="w-full bg-[#061916] border border-white/20 rounded p-2 text-white text-right" />
-              </div>
-
-              <div>
-                <label class="block text-gray-400 mb-1">Sub-Tagline (EN)</label>
-                <input v-model="slide.subTaglineEn" class="w-full bg-[#061916] border border-white/20 rounded p-2 text-white" />
-              </div>
-              <div>
-                <label class="block text-gray-400 mb-1">Sub-Tagline (AR)</label>
-                <input v-model="slide.subTaglineAr" class="w-full bg-[#061916] border border-white/20 rounded p-2 text-white text-right" />
-              </div>
-
-              <div class="md:col-span-2">
-                <label class="block text-gray-400 mb-1">Description (EN)</label>
-                <textarea v-model="slide.descriptionEn" rows="2" class="w-full bg-[#061916] border border-white/20 rounded p-2 text-white"></textarea>
-              </div>
-              <div class="md:col-span-2">
-                <label class="block text-gray-400 mb-1">Description (AR)</label>
-                <textarea v-model="slide.descriptionAr" rows="2" class="w-full bg-[#061916] border border-white/20 rounded p-2 text-white text-right"></textarea>
-              </div>
+              <input
+                v-model="slide.bgImage"
+                placeholder="Or paste image URL / Base64..."
+                class="w-full bg-[#061916] border border-white/20 rounded-lg p-2 text-[11px] text-white font-mono"
+              />
             </div>
           </div>
         </div>
 
-        <button @click="showToast('Hero Carousel & Button Link changes saved!')" class="px-6 py-2.5 bg-[#C5A059] text-[#061916] font-bold text-xs rounded-lg hover:bg-[#E5C483]">
+        <button @click="showToast('Hero Carousel images saved successfully!')" class="px-6 py-2.5 bg-[#C5A059] text-[#061916] font-bold text-xs rounded-lg hover:bg-[#E5C483] cursor-pointer">
           Save Hero Changes
         </button>
       </div>
@@ -637,42 +571,34 @@
       </div>
     </v-dialog>
 
-    <!-- Modal: Add Hero Slide -->
-    <v-dialog v-model="showAddSlideModal" max-width="600">
+    <!-- Modal: Add Hero Image Slide -->
+    <v-dialog v-model="showAddSlideModal" max-width="500">
       <div class="bg-[#061916] border border-[#C5A059]/40 rounded-2xl p-6 text-white space-y-4">
-        <h4 class="text-base font-bold font-serif text-[#E5C483]">Add New Hero Slide</h4>
-        <div class="space-y-3 text-xs">
+        <h4 class="text-base font-bold font-serif text-[#E5C483]">Add New Hero Image (إضافة صورة جديدة للهيرو)</h4>
+        <div class="space-y-4 text-xs">
           
           <!-- Modal Image File Upload -->
-          <div class="bg-[#041210] p-3 rounded-lg border border-[#C5A059]/30 space-y-2">
-            <label class="block text-xs font-bold text-[#E5C483] uppercase">Hero Background Image</label>
+          <div class="bg-[#041210] p-4 rounded-xl border border-[#C5A059]/30 space-y-3">
+            <label class="block text-xs font-bold text-[#E5C483] uppercase">Upload Image from Device</label>
             <div class="flex items-center gap-2">
-              <label class="px-3 py-2 bg-[#C5A059] text-[#061916] font-bold text-xs rounded cursor-pointer hover:bg-[#E5C483] flex items-center gap-1">
-                <v-icon size="14">mdi-upload</v-icon>
+              <label class="px-4 py-2.5 bg-[#C5A059] text-[#061916] font-bold text-xs rounded cursor-pointer hover:bg-[#E5C483] flex items-center gap-1.5 shadow-md">
+                <v-icon size="16">mdi-upload</v-icon>
                 <span>Upload File</span>
                 <input type="file" accept="image/*" class="hidden" @change="onNewSlideFileUpload" />
               </label>
-              <input v-model="newSlide.bgImage" placeholder="Or Image URL / Data Base64..." class="flex-1 bg-[#061916] border border-white/20 rounded p-2 text-xs text-white font-mono" />
+              <input v-model="newSlide.bgImage" placeholder="Or paste image URL / Base64..." class="flex-1 bg-[#061916] border border-white/20 rounded p-2.5 text-xs text-white font-mono" />
+            </div>
+
+            <!-- Preview in Modal -->
+            <div v-if="newSlide.bgImage" class="relative h-40 w-full rounded-lg overflow-hidden border border-white/20 mt-2">
+              <img :src="newSlide.bgImage" alt="Preview" class="w-full h-full object-cover" />
             </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-2">
-            <input v-model="newSlide.primaryBtnLink" placeholder="Primary Link (e.g. #programs)" class="bg-[#041210] border border-white/20 rounded p-2.5 text-white font-mono" />
-            <input v-model="newSlide.secondaryBtnLink" placeholder="Secondary Link (e.g. #donate)" class="bg-[#041210] border border-white/20 rounded p-2.5 text-white font-mono" />
-          </div>
-
-          <input v-model="newSlide.badgeEn" placeholder="Badge (EN)" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white" />
-          <input v-model="newSlide.badgeAr" placeholder="Badge (AR)" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white text-right" />
-          <input v-model="newSlide.taglineEn" placeholder="Tagline (EN)" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white" />
-          <input v-model="newSlide.taglineAr" placeholder="Tagline (AR)" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white text-right" />
-          <input v-model="newSlide.subTaglineEn" placeholder="Sub-Tagline (EN)" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white" />
-          <input v-model="newSlide.subTaglineAr" placeholder="Sub-Tagline (AR)" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white text-right" />
-          <textarea v-model="newSlide.descriptionEn" placeholder="Description (EN)" rows="2" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white"></textarea>
-          <textarea v-model="newSlide.descriptionAr" placeholder="Description (AR)" rows="2" class="w-full bg-[#041210] border border-white/20 rounded p-2.5 text-white text-right"></textarea>
         </div>
-        <div class="flex justify-end gap-2 pt-2">
-          <button @click="showAddSlideModal = false" class="px-4 py-2 bg-gray-700 text-white rounded text-xs">Cancel</button>
-          <button @click="onSaveSlide" class="px-4 py-2 bg-[#C5A059] text-[#061916] font-bold rounded text-xs">Save Slide</button>
+        <div class="flex justify-end gap-2 pt-2 border-t border-white/10">
+          <button @click="showAddSlideModal = false" class="px-4 py-2 bg-gray-700 text-white rounded text-xs cursor-pointer">Cancel</button>
+          <button @click="onSaveSlide" class="px-4 py-2 bg-[#C5A059] text-[#061916] font-bold rounded text-xs cursor-pointer hover:bg-[#E5C483]">Add Image Slide</button>
         </div>
       </div>
     </v-dialog>
@@ -869,7 +795,7 @@ const newSlide = ref({
 })
 
 function onSaveSlide() {
-  if (newSlide.value.taglineEn) {
+  if (newSlide.value.bgImage) {
     cms.addHeroSlide({ ...newSlide.value })
     newSlide.value = {
       bgImage: '',
@@ -881,17 +807,19 @@ function onSaveSlide() {
       subTaglineAr: '',
       descriptionEn: '',
       descriptionAr: '',
-      primaryBtnEn: 'OUR PROGRAMS',
-      primaryBtnAr: 'برامجنا',
-      secondaryBtnEn: 'DONATE NOW',
-      secondaryBtnAr: 'تبرع الآن',
-      primaryAction: 'programs',
-      secondaryAction: 'donate',
-      primaryBtnLink: '#programs',
-      secondaryBtnLink: '#donate',
+      primaryBtnEn: '',
+      primaryBtnAr: '',
+      secondaryBtnEn: '',
+      secondaryBtnAr: '',
+      primaryAction: '',
+      secondaryAction: '',
+      primaryBtnLink: '',
+      secondaryBtnLink: '',
     }
     showAddSlideModal.value = false
-    showToast('New Hero Slide added!')
+    showToast('New Hero Image Slide added successfully!')
+  } else {
+    showToast('Please upload or enter an image URL first.')
   }
 }
 

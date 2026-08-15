@@ -1,127 +1,71 @@
 <template>
   <section
-    class="relative min-h-[580px] lg:min-h-[660px] flex items-center justify-center overflow-hidden bg-[#061916] group"
+    class="relative w-full h-[360px] sm:h-[480px] md:h-[560px] lg:h-[650px] xl:h-[720px] overflow-hidden bg-[#041210] group select-none"
     @mouseenter="pauseAutoplay"
     @mouseleave="startAutoplay"
   >
-    <!-- Background Image & Enhanced Glowing Overlay -->
-    <div class="absolute inset-0 z-0">
-      <img
-        :src="currentSlide.bgImage || defaultHeroImg"
-        alt="Najaf Shrine Background"
-        class="w-full h-full object-cover object-center filter brightness-[0.58] contrast-115 transition-all duration-1000 scale-105 group-hover:scale-100"
-      />
-      <!-- Gradient Overlays to preserve high text contrast while keeping image vibrant & clear -->
-      <div class="absolute inset-0 bg-gradient-to-t from-[#061916] via-[#061916]/40 to-transparent"></div>
-      <div class="absolute inset-0 bg-gradient-to-r from-[#061916]/90 via-[#061916]/50 to-transparent" :class="{ 'bg-gradient-to-l': isRtl }"></div>
+    <!-- Slides Images Container with Smooth Slide Transition -->
+    <div class="relative w-full h-full">
+      <TransitionGroup name="carousel-fade">
+        <div
+          v-for="(slide, index) in slides"
+          :key="slide.id"
+          v-show="currentSlideIndex === index"
+          class="absolute inset-0 w-full h-full"
+        >
+          <img
+            :src="slide.bgImage || defaultHeroImg"
+            alt="Hero Carousel Slide"
+            class="w-full h-full object-cover object-center filter brightness-95 contrast-105 transition-transform duration-[6000ms] ease-out scale-100 group-hover:scale-105"
+          />
+
+          <!-- Very Subtle Soft Vignette for Visual Elegance -->
+          <div class="absolute inset-0 bg-gradient-to-t from-[#041210]/60 via-transparent to-[#041210]/20 pointer-events-none"></div>
+        </div>
+      </TransitionGroup>
     </div>
 
-    <!-- Main Content Container with Vue Transition -->
-    <div class="relative z-10 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-16 flex flex-col justify-between min-h-[480px]">
-      
-      <div class="max-w-4xl space-y-6 text-left" :class="{ 'text-right': isRtl }">
-        <Transition name="hero-fade" mode="out-in">
-          <div :key="currentSlideIndex" class="space-y-6">
-            
-            <!-- Badge -->
-            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#061916]/80 border border-[#C5A059]/40 text-[#E5C483] text-xs font-semibold uppercase tracking-wider backdrop-blur-md shadow-lg">
-              <v-icon size="14" color="#C5A059">mdi-star-four-points-outline</v-icon>
-              <span>{{ currentSlide.badge }}</span>
-            </div>
+    <!-- Left & Right Floating Navigation Arrows -->
+    <button
+      @click="prevSlide"
+      class="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-[#061916]/60 hover:bg-[#C5A059] text-white hover:text-[#061916] border border-[#C5A059]/40 hover:border-[#C5A059] backdrop-blur-md flex items-center justify-center transition-all duration-300 shadow-2xl opacity-75 sm:opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-95 z-20 cursor-pointer"
+      :title="isRtl ? 'الصورة السابقة' : 'Previous Slide'"
+      aria-label="Previous Slide"
+    >
+      <v-icon size="24">{{ isRtl ? 'mdi-chevron-right' : 'mdi-chevron-left' }}</v-icon>
+    </button>
 
-            <!-- Title -->
-            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold font-serif text-white tracking-tight leading-tight drop-shadow-md">
-              {{ currentSlide.tagline }}
-              <span class="block text-transparent bg-clip-text bg-gradient-to-r from-[#E5C483] via-[#C5A059] to-[#8C6B28] mt-1">
-                {{ currentSlide.subTagline }}
-              </span>
-            </h1>
+    <button
+      @click="nextSlide"
+      class="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-[#061916]/60 hover:bg-[#C5A059] text-white hover:text-[#061916] border border-[#C5A059]/40 hover:border-[#C5A059] backdrop-blur-md flex items-center justify-center transition-all duration-300 shadow-2xl opacity-75 sm:opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-95 z-20 cursor-pointer"
+      :title="isRtl ? 'الصورة التالية' : 'Next Slide'"
+      aria-label="Next Slide"
+    >
+      <v-icon size="24">{{ isRtl ? 'mdi-chevron-left' : 'mdi-chevron-right' }}</v-icon>
+    </button>
 
-            <!-- Description -->
-            <p class="text-base sm:text-lg text-gray-200 max-w-2xl font-light leading-relaxed drop-shadow-sm">
-              {{ currentSlide.description }}
-            </p>
+    <!-- Sleek Bottom Pagination Indicators -->
+    <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 px-4 py-2 rounded-full bg-[#061916]/70 backdrop-blur-md border border-white/10 shadow-2xl">
+      <button
+        v-for="(slide, index) in slides"
+        :key="slide.id"
+        @click="goToSlide(index)"
+        :class="[
+          'h-2 rounded-full transition-all duration-500 cursor-pointer',
+          currentSlideIndex === index
+            ? 'w-8 bg-gradient-to-r from-[#E5C483] via-[#C5A059] to-[#8C6B28] shadow-md shadow-[#C5A059]/50'
+            : 'w-2.5 bg-white/40 hover:bg-white/80'
+        ]"
+        :title="`Slide ${index + 1}`"
+        :aria-label="`Go to slide ${index + 1}`"
+      ></button>
+    </div>
 
-            <!-- Action Buttons with Custom Link Handler -->
-            <div class="flex flex-wrap items-center gap-4 pt-3">
-              <button
-                @click="onButtonClick(currentSlide.primaryAction, currentSlide.primaryBtnLink)"
-                class="px-8 py-3.5 bg-gradient-to-r from-[#E5C483] via-[#C5A059] to-[#8C6B28] text-[#061916] text-xs sm:text-sm font-extrabold tracking-wider rounded-lg shadow-xl shadow-black/40 hover:brightness-110 hover:scale-[1.02] active:scale-95 transition-all duration-300 flex items-center gap-2 uppercase cursor-pointer"
-              >
-                <span>{{ currentSlide.primaryBtnText }}</span>
-                <v-icon size="18">{{ isRtl ? 'mdi-arrow-left' : 'mdi-arrow-right' }}</v-icon>
-              </button>
-
-              <button
-                @click="onButtonClick(currentSlide.secondaryAction, currentSlide.secondaryBtnLink)"
-                class="px-8 py-3.5 bg-[#061916]/70 backdrop-blur-md border border-[#C5A059]/70 text-white text-xs sm:text-sm font-bold tracking-wider rounded-lg hover:bg-[#C5A059]/30 hover:border-[#C5A059] hover:scale-[1.02] active:scale-95 transition-all duration-300 flex items-center gap-2 uppercase cursor-pointer shadow-lg"
-              >
-                <v-icon size="18" class="text-[#E5C483]">mdi-heart-outline</v-icon>
-                <span>{{ currentSlide.secondaryBtnText }}</span>
-              </button>
-            </div>
-
-          </div>
-        </Transition>
-      </div>
-
-      <!-- Carousel Bottom Bar (Social Links + Navigation Dots & Arrows) -->
-      <div class="pt-8 border-t border-white/15 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-300">
-        
-        <!-- Dynamic Social Links -->
-        <div class="flex items-center gap-4">
-          <span>{{ t('hero.followUs') }}</span>
-          <div class="flex items-center gap-2.5 text-white">
-            <a :href="cms.socialLinks.facebook || '#'" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-full bg-[#061916]/60 backdrop-blur-md border border-white/20 flex items-center justify-center hover:border-[#C5A059] hover:text-[#C5A059] transition-all" title="Facebook"><v-icon size="16">mdi-facebook</v-icon></a>
-            <a :href="cms.socialLinks.youtube || '#'" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-full bg-[#061916]/60 backdrop-blur-md border border-white/20 flex items-center justify-center hover:border-[#C5A059] hover:text-[#C5A059] transition-all" title="YouTube"><v-icon size="16">mdi-youtube</v-icon></a>
-            <a :href="cms.socialLinks.instagram || '#'" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-full bg-[#061916]/60 backdrop-blur-md border border-white/20 flex items-center justify-center hover:border-[#C5A059] hover:text-[#C5A059] transition-all" title="Instagram"><v-icon size="16">mdi-instagram</v-icon></a>
-            <a :href="cms.socialLinks.twitter || '#'" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-full bg-[#061916]/60 backdrop-blur-md border border-white/20 flex items-center justify-center hover:border-[#C5A059] hover:text-[#C5A059] transition-all" title="Twitter / X"><v-icon size="16">mdi-twitter</v-icon></a>
-            <a v-if="cms.socialLinks.telegram" :href="cms.socialLinks.telegram" target="_blank" rel="noopener noreferrer" class="w-8 h-8 rounded-full bg-[#061916]/60 backdrop-blur-md border border-white/20 flex items-center justify-center hover:border-[#C5A059] hover:text-[#C5A059] transition-all" title="Telegram"><v-icon size="16">mdi-paper-plane</v-icon></a>
-          </div>
-        </div>
-
-        <!-- Carousel Indicators & Arrows -->
-        <div class="flex items-center gap-6">
-          <!-- Dots -->
-          <div class="flex items-center gap-2">
-            <button
-              v-for="(slide, index) in slides"
-              :key="slide.id"
-              @click="goToSlide(index)"
-              :class="[
-                'h-2 rounded-full transition-all duration-300 cursor-pointer',
-                currentSlideIndex === index ? 'w-8 bg-[#C5A059]' : 'w-2 bg-white/40 hover:bg-white/70'
-              ]"
-              :title="`Slide ${index + 1}`"
-            ></button>
-          </div>
-
-          <!-- Slide Counter -->
-          <span class="font-mono text-[#E5C483] font-bold text-xs">
-            0{{ currentSlideIndex + 1 }} / 0{{ slides.length }}
-          </span>
-
-          <!-- Navigation Arrows -->
-          <div class="flex items-center gap-2">
-            <button
-              @click="prevSlide"
-              class="w-9 h-9 rounded-full bg-[#061916]/60 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:border-[#C5A059] hover:bg-[#C5A059] hover:text-[#061916] transition-all cursor-pointer"
-              title="Previous Slide"
-            >
-              <v-icon size="18">{{ isRtl ? 'mdi-chevron-right' : 'mdi-chevron-left' }}</v-icon>
-            </button>
-            <button
-              @click="nextSlide"
-              class="w-9 h-9 rounded-full bg-[#061916]/60 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:border-[#C5A059] hover:bg-[#C5A059] hover:text-[#061916] transition-all cursor-pointer"
-              title="Next Slide"
-            >
-              <v-icon size="18">{{ isRtl ? 'mdi-chevron-left' : 'mdi-chevron-right' }}</v-icon>
-            </button>
-          </div>
-        </div>
-
-      </div>
-
+    <!-- Subtle Slide Counter Pill (Top-Right) -->
+    <div class="absolute top-6 right-6 z-20 px-3 py-1 rounded-full bg-[#061916]/60 backdrop-blur-md border border-white/10 text-white font-mono text-xs font-bold shadow-lg">
+      <span class="text-[#E5C483]">0{{ currentSlideIndex + 1 }}</span>
+      <span class="text-gray-400 mx-1">/</span>
+      <span class="text-gray-300">0{{ slides.length }}</span>
     </div>
   </section>
 </template>
@@ -132,9 +76,7 @@ import { useI18n } from 'vue-i18n'
 import { useCmsStore } from '@/stores/cms'
 import defaultHeroImg from '@/assets/card_image.jpg'
 
-const emit = defineEmits(['open-action', 'open-programs', 'open-donate'])
-
-const { t, locale } = useI18n()
+const { locale } = useI18n()
 const cms = useCmsStore()
 
 const isRtl = computed(() => locale.value === 'ar')
@@ -143,50 +85,22 @@ const currentSlideIndex = ref(0)
 let autoplayTimer: any = null
 
 const slides = computed(() => {
+  if (!cms.heroSlides || cms.heroSlides.length === 0) {
+    return [{ id: 1, bgImage: defaultHeroImg }]
+  }
   return cms.heroSlides.map(s => ({
     id: s.id,
-    badge: isRtl.value ? s.badgeAr : s.badgeEn,
-    tagline: isRtl.value ? s.taglineAr : s.taglineEn,
-    subTagline: isRtl.value ? s.subTaglineAr : s.subTaglineEn,
-    description: isRtl.value ? s.descriptionAr : s.descriptionEn,
-    primaryBtnText: isRtl.value ? s.primaryBtnAr : s.primaryBtnEn,
-    secondaryBtnText: isRtl.value ? s.secondaryBtnAr : s.secondaryBtnEn,
-    primaryAction: s.primaryAction,
-    secondaryAction: s.secondaryAction,
-    primaryBtnLink: s.primaryBtnLink,
-    secondaryBtnLink: s.secondaryBtnLink,
     bgImage: s.bgImage || defaultHeroImg,
   }))
 })
 
-const currentSlide = computed(() => {
-  const sList = slides.value
-  if (currentSlideIndex.value >= sList.length) {
-    currentSlideIndex.value = 0
-  }
-  return sList[currentSlideIndex.value] || sList[0]
-})
-
-function onButtonClick(action: string, customLink?: string) {
-  if (customLink && customLink.startsWith('#')) {
-    const targetId = customLink.substring(1)
-    const el = document.getElementById(targetId)
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' })
-      return
-    }
-  } else if (customLink && (customLink.startsWith('http://') || customLink.startsWith('https://'))) {
-    window.open(customLink, '_blank')
-    return
-  }
-  emit('open-action', action, customLink)
-}
-
 function nextSlide() {
+  if (slides.value.length === 0) return
   currentSlideIndex.value = (currentSlideIndex.value + 1) % slides.value.length
 }
 
 function prevSlide() {
+  if (slides.value.length === 0) return
   currentSlideIndex.value = (currentSlideIndex.value - 1 + slides.value.length) % slides.value.length
 }
 
@@ -198,7 +112,7 @@ function startAutoplay() {
   if (autoplayTimer) clearInterval(autoplayTimer)
   autoplayTimer = setInterval(() => {
     nextSlide()
-  }, 5500)
+  }, 5000)
 }
 
 function pauseAutoplay() {
@@ -215,18 +129,13 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.hero-fade-enter-active,
-.hero-fade-leave-active {
-  transition: opacity 0.4s ease, transform 0.4s ease;
+.carousel-fade-enter-active,
+.carousel-fade-leave-active {
+  transition: opacity 0.8s ease-in-out;
 }
 
-.hero-fade-enter-from {
+.carousel-fade-enter-from,
+.carousel-fade-leave-to {
   opacity: 0;
-  transform: translateY(12px);
-}
-
-.hero-fade-leave-to {
-  opacity: 0;
-  transform: translateY(-12px);
 }
 </style>

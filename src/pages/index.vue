@@ -12,13 +12,9 @@
     <!-- Main Page Body -->
     <main class="flex-1">
       
-      <!-- Hero Section (Dark Emerald Carousel Banner) -->
+      <!-- Hero Section (Pure Image Carousel Banner) -->
       <section id="home">
-        <HeroSection
-          @open-action="handleHeroAction"
-          @open-programs="scrollToSection('institutions')"
-          @open-donate="showDonateModal = true"
-        />
+        <HeroSection />
       </section>
 
       <!-- Prayer Times Section (Sayyid Al-Khoei NY Calculations) -->
